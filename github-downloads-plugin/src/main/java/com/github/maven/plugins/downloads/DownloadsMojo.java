@@ -135,6 +135,13 @@ public class DownloadsMojo extends AbstractMojo {
 	private boolean override;
 
 	/**
+	 * Host for API calls
+	 * 
+	 * @parameter expression="${github.downloads.host}"
+	 */
+	private String host;
+
+	/**
 	 * 
 	 * @parameter expression="${project}
 	 * @required
@@ -170,7 +177,11 @@ public class DownloadsMojo extends AbstractMojo {
 	 */
 	protected GitHubClient createClient() throws MojoExecutionException {
 		final Log log = getLog();
-		GitHubClient client = new GitHubClient();
+		GitHubClient client;
+		if (!isEmpty(host))
+			client = new GitHubClient(host, -1, IGitHubConstants.PROTOCOL_HTTPS);
+		else
+			client = new GitHubClient();
 		if (userName != null && password != null) {
 			if (log.isDebugEnabled())
 				log.debug("Using basic authentication with username: "
