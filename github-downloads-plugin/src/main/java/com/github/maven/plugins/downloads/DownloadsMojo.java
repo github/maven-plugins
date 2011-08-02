@@ -132,7 +132,7 @@ public class DownloadsMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 */
-	private boolean overrideExisting;
+	private boolean override;
 
 	/**
 	 * 
@@ -214,7 +214,7 @@ public class DownloadsMojo extends AbstractMojo {
 		DownloadService service = new DownloadService(createClient());
 
 		Map<String, Integer> existing;
-		if (overrideExisting)
+		if (override)
 			try {
 				existing = new HashMap<String, Integer>();
 				for (Download download : service.getDownloads(repository))
