@@ -52,6 +52,7 @@ by the settings configuration property in `()`.
         <execution>
           <configuration>
             <description>Official build of the ${project.version} release</description>
+            <override>true</override>
           </configuration>
           <goals>
             <goal>upload</goal>
