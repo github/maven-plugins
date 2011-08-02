@@ -130,7 +130,7 @@ public class DownloadsMojo extends AbstractMojo {
 	/**
 	 * Override existing downloads
 	 * 
-	 * @parameter
+	 * @parameter expression="${github.downloads.override}"
 	 */
 	private boolean override;
 
