@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.mojo</groupId>
-	<artifactId>repository-downloads</artifactId>
+	<groupId>com.github.maven.plugins</groupId>
+	<artifactId>github-downloads-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>GitHub Repository Downloads Mojo</name>
+	<name>GitHub Downloads Maven Plug-in</name>
 	<url>https://github.com/github/mojo</url>
 	<issueManagement>
-		<url>https://github.com/github/mojo/issues</url>
+		<url>https://github.com/github/maven-plugins/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
 	<licenses>
@@ -19,8 +19,8 @@
 	</licenses>
 	<scm>
 		<url>https://github.com/github/mojo</url>
-		<connection>scm:git:git://github.com/github/mojo.git</connection>
-		<developerConnection>scm:git:git@github.com:github/mojo.git</developerConnection>
+		<connection>scm:git:git://github.com/github/maven-plugins.git</connection>
+		<developerConnection>scm:git:git@github.com:github/maven-plugins.git</developerConnection>
 	</scm>
 	<developers>
 		<developer>

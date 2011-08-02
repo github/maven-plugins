@@ -25,6 +25,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import com.github.maven.downloads.DownloadsMojo;
+
 import org.eclipse.egit.github.core.RepositoryId;
 import org.junit.Test;
 

@@ -1,17 +1,17 @@
-# GitHub Maven Mojos
-[Maven](http://maven.apache.org/) plugins that integrate with GitHub
+# GitHub Maven Plugins
+Collection of [Maven](http://maven.apache.org/) plugins that integrate with GitHub
 
 ## Downloads
 Maven plugin that creates and uploads a built resource to be available as a
-GitHub project download.
+GitHub repository download.
 
 ### Example
 ```xml
 <build>
   <plugins>
     <plugin>
-      <groupId>com.github.mojo</groupId>
-      <artifactId>repository-downloads</artifactId>
+      <groupId>com.github.maven</groupId>
+      <artifactId>downloads-plugins</artifactId>
       <executions>
         <execution>
           <configuration>
