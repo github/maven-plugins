@@ -35,6 +35,7 @@ by the settings configuration property in `()`.
   * Owner of repository that downloads will be uploaded to
 
 *Note:* `repositoryOwner` property and `repositoryName` are optional and will be inferred from the following properties if not specified
+
  * `project.url`
  * `project.scm.url`
  * `project.scm.connection`
