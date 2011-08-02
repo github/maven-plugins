@@ -10,8 +10,8 @@ GitHub repository download.
 <build>
   <plugins>
     <plugin>
-      <groupId>com.github.maven</groupId>
-      <artifactId>downloads-plugins</artifactId>
+      <groupId>com.github.maven.plugins</groupId>
+      <artifactId>github-downloads-plugins</artifactId>
       <executions>
         <execution>
           <configuration>
