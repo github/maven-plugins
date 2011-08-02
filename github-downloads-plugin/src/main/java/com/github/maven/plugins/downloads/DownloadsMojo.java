@@ -23,13 +23,16 @@ package com.github.maven.plugins.downloads;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.egit.github.core.Download;
 import org.eclipse.egit.github.core.DownloadResource;
 import org.eclipse.egit.github.core.RepositoryId;
@@ -83,22 +86,6 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Location of the file.
-	 * 
-	 * @parameter expression="${project.build.directory}"
-	 * @required
-	 */
-	private File outputDirectory;
-
-	/**
-	 * Location of the artifact name
-	 * 
-	 * @parameter expression="${project.build.finalName}"
-	 * @required
-	 */
-	private String buildName;
-
-	/**
 	 * Owner of repository to upload to
 	 * 
 	 * @parameter expression="${github.downloads.repositoryOwner}"
@@ -127,6 +114,13 @@ public class DownloadsMojo extends AbstractMojo {
 	private String password;
 
 	/**
+	 * Description of download
+	 * 
+	 * @parameter
+	 */
+	private String description;
+
+	/**
 	 * User name for authentication
 	 * 
 	 * @parameter expression="${github.downloads.oauth2Token}"
@@ -134,32 +128,18 @@ public class DownloadsMojo extends AbstractMojo {
 	private String oauth2Token;
 
 	/**
-	 * SCM URL
+	 * Override existing downloads
 	 * 
-	 * @parameter expression="${project.scm.url}"
+	 * @parameter
 	 */
-	private String scmUrl;
+	private boolean overrideExisting;
 
 	/**
-	 * Project URL
 	 * 
-	 * @parameter expression="${project.url}"
+	 * @parameter expression="${project}
+	 * @required
 	 */
-	private String projectUrl;
-
-	/**
-	 * SCM connection
-	 * 
-	 * @parameter expression="${project.scm.connection}"
-	 */
-	private String scmConnection;
-
-	/**
-	 * SCM developer connection
-	 * 
-	 * @parameter expression="${project.scm.developerConnection}"
-	 */
-	private String scmDeveloperConnection;
+	private MavenProject project;
 
 	/**
 	 * Get repository
@@ -170,14 +150,15 @@ public class DownloadsMojo extends AbstractMojo {
 		RepositoryId repo = null;
 		if (!isEmpty(repositoryOwner, repositoryName))
 			repo = RepositoryId.create(repositoryOwner, repositoryName);
-		if (repo == null && !isEmpty(projectUrl))
-			repo = RepositoryId.createFromUrl(projectUrl);
-		if (repo == null && !isEmpty(scmUrl))
-			repo = RepositoryId.createFromUrl(scmUrl);
+		if (repo == null && !isEmpty(project.getUrl()))
+			repo = RepositoryId.createFromUrl(project.getUrl());
+		if (repo == null && !isEmpty(project.getScm().getUrl()))
+			repo = RepositoryId.createFromUrl(project.getScm().getUrl());
 		if (repo == null)
-			repo = extractRepositoryFromScmUrl(scmConnection);
+			repo = extractRepositoryFromScmUrl(project.getScm().getConnection());
 		if (repo == null)
-			repo = extractRepositoryFromScmUrl(scmDeveloperConnection);
+			repo = extractRepositoryFromScmUrl(project.getScm()
+					.getDeveloperConnection());
 		return repo;
 	}
 
@@ -205,62 +186,84 @@ public class DownloadsMojo extends AbstractMojo {
 		return client;
 	}
 
+	/**
+	 * Get exception message for {@link IOException}
+	 * 
+	 * @param e
+	 * @return message
+	 */
+	protected String getExceptionMessage(IOException e) {
+		String message = null;
+		if (e instanceof RequestException) {
+			RequestException requestException = (RequestException) e;
+			message = Integer.toString(requestException.getStatus()) + " "
+					+ requestException.formatErrors();
+		} else
+			message = e.getMessage();
+		return message;
+	}
+
 	public void execute() throws MojoExecutionException {
 		final Log log = getLog();
-		File[] files = outputDirectory.listFiles(new FilenameFilter() {
-
-			public boolean accept(File dir, String name) {
-				return name.startsWith(buildName);
-			}
-		});
-		if (files.length == 0) {
-			if (log.isDebugEnabled())
-				log.debug(MessageFormat.format(
-						"No files found in {0} that started with {1}",
-						outputDirectory, buildName));
-			return;
-		}
+		final boolean debug = log.isDebugEnabled();
 
 		RepositoryId repository = getRepository();
-		if (repository == null) {
-			StringBuilder message = new StringBuilder(
-					"No GitHub repository configured:\n");
-			message.append("repositoryName=").append(repositoryName)
-					.append('\n');
-			message.append("repositoryOwner=").append(repositoryOwner)
-					.append('\n');
-			message.append("scmUrl=").append(scmUrl).append('\n');
-			message.append("scmConnection=").append(scmConnection).append('\n');
-			message.append("scmDeveloperConnection=")
-					.append(scmDeveloperConnection).append('\n');
-			throw new MojoExecutionException(message.toString());
-		}
+		if (repository == null)
+			throw new MojoExecutionException("No GitHub repository configured");
 
 		DownloadService service = new DownloadService(createClient());
-		for (File file : files) {
-			Download download = new Download();
-			download.setName(file.getName());
-			download.setSize(file.length());
-			if (log.isDebugEnabled())
-				log.debug(MessageFormat.format(
-						"Creating download with name: {0} and size: {1}",
-						download.getName(), download.getSize()));
+
+		Map<String, Integer> existing;
+		if (overrideExisting)
 			try {
-				DownloadResource resource = service.createResource(repository,
-						download);
-				service.uploadResource(resource, new FileInputStream(file),
-						download.getSize());
+				existing = new HashMap<String, Integer>();
+				for (Download download : service.getDownloads(repository))
+					if (!isEmpty(download.getName()))
+						existing.put(download.getName(), download.getId());
+				if (debug)
+					log.debug(MessageFormat.format(
+							"Listed {0} existing downloads", existing.size()));
 			} catch (IOException e) {
-				String message = null;
-				if (e instanceof RequestException) {
-					RequestException requestException = (RequestException) e;
-					message = Integer.toString(requestException.getStatus())
-							+ " " + requestException.formatErrors();
-				} else
-					message = e.getMessage();
-				throw new MojoExecutionException("Resource upload failed: "
-						+ message, e);
+				throw new MojoExecutionException("Listing downloads failed: "
+						+ getExceptionMessage(e), e);
 			}
+		else
+			existing = Collections.emptyMap();
+
+		File file = project.getArtifact().getFile();
+		final String name = file.getName();
+
+		Integer existingId = existing.get(name);
+		if (existingId != null)
+			try {
+				if (debug)
+					log.debug(MessageFormat.format(
+							"Deleting existing download: {0} ({1})", name,
+							existingId));
+				service.deleteDownload(repository, existingId);
+			} catch (IOException e) {
+				throw new MojoExecutionException(
+						"Delete existing download failed: "
+								+ getExceptionMessage(e), e);
+			}
+
+		Download download = new Download();
+		download.setName(name);
+		if (!isEmpty(description))
+			download.setDescription(description);
+		download.setSize(file.length());
+		if (debug)
+			log.debug(MessageFormat.format(
+					"Creating download with name {0} and size {1}", name,
+					download.getSize()));
+		try {
+			DownloadResource resource = service.createResource(repository,
+					download);
+			service.uploadResource(resource, new FileInputStream(file),
+					download.getSize());
+		} catch (IOException e) {
+			throw new MojoExecutionException("Resource upload failed: "
+					+ getExceptionMessage(e), e);
 		}
 	}
 }
