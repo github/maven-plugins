@@ -19,13 +19,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-package com.github.mojo.downloads;
+package com.github.maven.plugins.downloads;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import com.github.maven.downloads.DownloadsMojo;
+import com.github.maven.plugins.downloads.DownloadsMojo;
 
 import org.eclipse.egit.github.core.RepositoryId;
 import org.junit.Test;
