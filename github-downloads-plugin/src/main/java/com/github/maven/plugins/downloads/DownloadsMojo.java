@@ -254,15 +254,12 @@ public class DownloadsMojo extends AbstractMojo {
 			scanner.scan();
 			if (getLog().isDebugEnabled())
 				getLog().debug(
-						MessageFormat.format(
-								"Including {0} file(s) to upload: {1}",
-								scanner.getIncludedFiles().length,
+						MessageFormat.format("Scanned files to include: {0}",
 								Arrays.toString(scanner.getIncludedFiles())));
 			for (String path : scanner.getIncludedFiles())
 				files.add(new File(baseDir, path));
-		} else {
+		} else
 			files = Collections.singletonList(project.getArtifact().getFile());
-		}
 		return files;
 	}
 
@@ -294,7 +291,10 @@ public class DownloadsMojo extends AbstractMojo {
 		else
 			existing = Collections.emptyMap();
 
-		for (File file : getFiles()) {
+		List<File> files = getFiles();
+		log.info(MessageFormat.format("Creating {0} download(s) at {1}",
+				files.size(), repository.generateId()));
+		for (File file : files) {
 			final String name = file.getName();
 			Integer existingId = existing.get(name);
 			if (existingId != null)
@@ -315,10 +315,8 @@ public class DownloadsMojo extends AbstractMojo {
 			if (!isEmpty(description))
 				download.setDescription(description);
 			download.setSize(file.length());
-			if (debug)
-				log.debug(MessageFormat.format(
-						"Creating download with name {0} and size {1}", name,
-						download.getSize()));
+			log.info(MessageFormat.format("Creating download: {0} ({1} bytes)",
+					name, download.getSize()));
 			try {
 				DownloadResource resource = service.createResource(repository,
 						download);
