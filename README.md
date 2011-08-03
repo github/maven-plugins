@@ -58,10 +58,10 @@ by the settings configuration property in `()`.
             <description>Official build of the ${project.version} release</description>
             <override>true</override>
             <excludes>
-              <exclude>**/unit-tests.jar
+              <exclude>**/unit-tests.jar</exclude>
             </excludes>
             <includes>
-              <include>**/*.jar
+              <include>**/*.jar</include>
             </includes>
           </configuration>
           <goals>
