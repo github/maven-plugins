@@ -292,8 +292,9 @@ public class DownloadsMojo extends AbstractMojo {
 			existing = Collections.emptyMap();
 
 		List<File> files = getFiles();
-		log.info(MessageFormat.format("Creating {0} download(s) at {1}",
-				files.size(), repository.generateId()));
+		log.info(MessageFormat.format(
+				"Adding {0} download(s) to {1} repository", files.size(),
+				repository.generateId()));
 		for (File file : files) {
 			final String name = file.getName();
 			Integer existingId = existing.get(name);
@@ -315,7 +316,7 @@ public class DownloadsMojo extends AbstractMojo {
 			if (!isEmpty(description))
 				download.setDescription(description);
 			download.setSize(file.length());
-			log.info(MessageFormat.format("Creating download: {0} ({1} bytes)",
+			log.info(MessageFormat.format("Adding download: {0} ({1} bytes)",
 					name, download.getSize()));
 			try {
 				DownloadResource resource = service.createResource(repository,
