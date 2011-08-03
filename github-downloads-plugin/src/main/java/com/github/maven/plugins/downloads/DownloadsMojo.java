@@ -34,7 +34,6 @@ import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.egit.github.core.Download;
@@ -193,20 +192,18 @@ public class DownloadsMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected GitHubClient createClient() throws MojoExecutionException {
-		final Log log = getLog();
 		GitHubClient client;
 		if (!isEmpty(host))
 			client = new GitHubClient(host, -1, IGitHubConstants.PROTOCOL_HTTPS);
 		else
 			client = new GitHubClient();
 		if (userName != null && password != null) {
-			if (log.isDebugEnabled())
-				log.debug("Using basic authentication with username: "
-						+ userName);
+			if (isDebug())
+				debug("Using basic authentication with username: " + userName);
 			client.setCredentials(userName, password);
 		} else if (oauth2Token != null) {
-			if (log.isDebugEnabled())
-				log.debug("Using OAuth2 authentication");
+			if (isDebug())
+				debug("Using OAuth2 authentication");
 			client.setOAuth2Token(oauth2Token);
 		} else
 			throw new MojoExecutionException(
@@ -250,15 +247,50 @@ public class DownloadsMojo extends AbstractMojo {
 			if (hasExcludes)
 				scanner.setExcludes(excludes);
 			scanner.scan();
-			if (getLog().isDebugEnabled())
-				getLog().debug(
-						MessageFormat.format("Scanned files to include: {0}",
-								Arrays.toString(scanner.getIncludedFiles())));
+			if (isDebug())
+				debug(MessageFormat.format("Scanned files to include: {0}",
+						Arrays.toString(scanner.getIncludedFiles())));
 			for (String path : scanner.getIncludedFiles())
 				files.add(new File(baseDir, path));
 		} else
 			files = Collections.singletonList(project.getArtifact().getFile());
 		return files;
+	}
+
+	/**
+	 * If debug logging enabled?
+	 * 
+	 * @return true if enabled, false otherwise
+	 */
+	protected boolean isDebug() {
+		return getLog().isDebugEnabled();
+	}
+
+	/**
+	 * If info logging enabled?
+	 * 
+	 * @return true if enabled, false otherwse
+	 */
+	protected boolean isInfo() {
+		return getLog().isInfoEnabled();
+	}
+
+	/**
+	 * Log given message at debug level
+	 * 
+	 * @param message
+	 */
+	protected void debug(String message) {
+		getLog().debug(message);
+	}
+
+	/**
+	 * Log given message at info level
+	 * 
+	 * @param message
+	 */
+	protected void info(String message) {
+		getLog().info(message);
 	}
 
 	/**
@@ -277,10 +309,14 @@ public class DownloadsMojo extends AbstractMojo {
 			for (Download download : service.getDownloads(repository))
 				if (!isEmpty(download.getName()))
 					existing.put(download.getName(), download.getId());
-			if (getLog().isDebugEnabled())
-				getLog().debug(
-						MessageFormat.format("Listed {0} existing downloads",
-								existing.size()));
+			if (isDebug()) {
+				final int size = existing.size();
+				if (size != 1)
+					debug(MessageFormat.format("Listed {0} existing downloads",
+							size));
+				else
+					debug("Listed 1 existing download");
+			}
 			return existing;
 		} catch (IOException e) {
 			throw new MojoExecutionException("Listing downloads failed: "
@@ -300,9 +336,9 @@ public class DownloadsMojo extends AbstractMojo {
 	protected void deleteDownload(RepositoryId repository, String name, int id,
 			DownloadService service) throws MojoExecutionException {
 		try {
-			getLog().info(
-					MessageFormat.format(
-							"Deleting existing download: {0} ({1})", name, id));
+			info(MessageFormat.format(
+					"Deleting existing download: {0} (id={1})", name,
+					Integer.toString(id)));
 			service.deleteDownload(repository, id);
 		} catch (IOException e) {
 			String prefix = MessageFormat.format(
@@ -312,7 +348,6 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	public void execute() throws MojoExecutionException {
-		final Log log = getLog();
 
 		RepositoryId repository = getRepository();
 		if (repository == null)
@@ -328,9 +363,15 @@ public class DownloadsMojo extends AbstractMojo {
 			existing = Collections.emptyMap();
 
 		List<File> files = getFiles();
-		log.info(MessageFormat.format(
-				"Adding {0} download(s) to {1} repository", files.size(),
-				repository.generateId()));
+
+		int fileCount = files.size();
+		if (fileCount != 1)
+			info(MessageFormat.format("Adding {0} downloads to repository {1}",
+					fileCount, repository.generateId()));
+		else
+			info(MessageFormat.format("Adding 1 download to repository {0}",
+					repository.generateId()));
+
 		for (File file : files) {
 			final String name = file.getName();
 			final long size = file.length();
@@ -341,8 +382,14 @@ public class DownloadsMojo extends AbstractMojo {
 			Download download = new Download().setName(name).setSize(size);
 			if (!isEmpty(description))
 				download.setDescription(description);
-			log.info(MessageFormat.format("Adding download: {0} ({1} byte(s))",
-					name, size));
+
+			if (size != 1)
+				info(MessageFormat.format("Adding download: {0} ({1} bytes)",
+						name, size));
+			else
+				info(MessageFormat
+						.format("Adding download: {0} (1 byte)", name));
+
 			try {
 				DownloadResource resource = service.createResource(repository,
 						download);
