@@ -69,7 +69,7 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Extra repository id from scm url
+	 * Extra repository id from given SCM URL
 	 * 
 	 * @param url
 	 * @return repository id or null if extraction fails
@@ -83,9 +83,7 @@ public class DownloadsMojo extends AbstractMojo {
 		if (!url.endsWith(IGitHubConstants.SUFFIX_GIT))
 			return null;
 		url = url.substring(ghIndex + IGitHubConstants.HOST_DEFAULT.length()
-				+ 1);
-		url = url.substring(0,
-				url.length() - IGitHubConstants.SUFFIX_GIT.length());
+				+ 1, url.length() - IGitHubConstants.SUFFIX_GIT.length());
 		return RepositoryId.createFromId(url);
 	}
 
@@ -263,9 +261,58 @@ public class DownloadsMojo extends AbstractMojo {
 		return files;
 	}
 
+	/**
+	 * Get map of existing downloads with names mapped to download identifiers.
+	 * 
+	 * @param service
+	 * @param repository
+	 * @return map of existing downloads
+	 * @throws MojoExecutionException
+	 */
+	protected Map<String, Integer> getExistingDownloads(
+			DownloadService service, RepositoryId repository)
+			throws MojoExecutionException {
+		try {
+			Map<String, Integer> existing = new HashMap<String, Integer>();
+			for (Download download : service.getDownloads(repository))
+				if (!isEmpty(download.getName()))
+					existing.put(download.getName(), download.getId());
+			if (getLog().isDebugEnabled())
+				getLog().debug(
+						MessageFormat.format("Listed {0} existing downloads",
+								existing.size()));
+			return existing;
+		} catch (IOException e) {
+			throw new MojoExecutionException("Listing downloads failed: "
+					+ getExceptionMessage(e), e);
+		}
+	}
+
+	/**
+	 * Deleting existing download with given id and name
+	 * 
+	 * @param repository
+	 * @param name
+	 * @param id
+	 * @param service
+	 * @throws MojoExecutionException
+	 */
+	protected void deleteDownload(RepositoryId repository, String name, int id,
+			DownloadService service) throws MojoExecutionException {
+		try {
+			getLog().info(
+					MessageFormat.format(
+							"Deleting existing download: {0} ({1})", name, id));
+			service.deleteDownload(repository, id);
+		} catch (IOException e) {
+			String prefix = MessageFormat.format(
+					"Deleting existing download {0} failed: ", name);
+			throw new MojoExecutionException(prefix + getExceptionMessage(e), e);
+		}
+	}
+
 	public void execute() throws MojoExecutionException {
 		final Log log = getLog();
-		final boolean debug = log.isDebugEnabled();
 
 		RepositoryId repository = getRepository();
 		if (repository == null)
@@ -276,18 +323,7 @@ public class DownloadsMojo extends AbstractMojo {
 
 		Map<String, Integer> existing;
 		if (override)
-			try {
-				existing = new HashMap<String, Integer>();
-				for (Download download : service.getDownloads(repository))
-					if (!isEmpty(download.getName()))
-						existing.put(download.getName(), download.getId());
-				if (debug)
-					log.debug(MessageFormat.format(
-							"Listed {0} existing downloads", existing.size()));
-			} catch (IOException e) {
-				throw new MojoExecutionException("Listing downloads failed: "
-						+ getExceptionMessage(e), e);
-			}
+			existing = getExistingDownloads(service, repository);
 		else
 			existing = Collections.emptyMap();
 
@@ -297,34 +333,25 @@ public class DownloadsMojo extends AbstractMojo {
 				repository.generateId()));
 		for (File file : files) {
 			final String name = file.getName();
+			final long size = file.length();
 			Integer existingId = existing.get(name);
 			if (existingId != null)
-				try {
-					if (debug)
-						log.debug(MessageFormat.format(
-								"Deleting existing download: {0} ({1})", name,
-								existingId));
-					service.deleteDownload(repository, existingId);
-				} catch (IOException e) {
-					throw new MojoExecutionException(
-							"Delete existing download failed: "
-									+ getExceptionMessage(e), e);
-				}
+				deleteDownload(repository, name, existingId, service);
 
-			Download download = new Download();
-			download.setName(name);
+			Download download = new Download().setName(name).setSize(size);
 			if (!isEmpty(description))
 				download.setDescription(description);
-			download.setSize(file.length());
-			log.info(MessageFormat.format("Adding download: {0} ({1} bytes)",
-					name, download.getSize()));
+			log.info(MessageFormat.format("Adding download: {0} ({1} byte(s))",
+					name, size));
 			try {
 				DownloadResource resource = service.createResource(repository,
 						download);
 				service.uploadResource(resource, new FileInputStream(file),
-						download.getSize());
+						size);
 			} catch (IOException e) {
-				throw new MojoExecutionException("Resource upload failed: "
+				String prefix = MessageFormat.format(
+						"Resource {0} upload failed: ", name);
+				throw new MojoExecutionException(prefix
 						+ getExceptionMessage(e), e);
 			}
 		}
