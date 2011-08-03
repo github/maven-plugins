@@ -51,7 +51,7 @@ by the settings configuration property in `()`.
   <plugins>
     <plugin>
       <groupId>com.github.maven.plugins</groupId>
-      <artifactId>github-downloads-plugins</artifactId>
+      <artifactId>github-downloads-plugin</artifactId>
       <executions>
         <execution>
           <configuration>
