@@ -17,6 +17,12 @@
 			<url>http://www.opensource.org/licenses/mit-license.php</url>
 		</license>
 	</licenses>
+	<repositories>
+		<repository>
+			<id>github-plugin-dependencies</id>
+			<url>http://github.github.com/maven-plugins/repository</url>
+		</repository>
+	</repositories>
 	<scm>
 		<url>https://github.com/github/maven-plugins</url>
 		<connection>scm:git:git://github.com/github/maven-plugins.git</connection>
