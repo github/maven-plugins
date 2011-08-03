@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='1'>
+  <unit id='org.eclipse.egit.github.core' version='1.1.0.201108021810' singleton='false'>
+    <update id='org.eclipse.egit.github.core' range='[0.0.0,1.1.0.201108021810)' severity='0'/>
+    <properties size='8'>
+      <property name='df_LT.providerName' value='Eclipse EGit'/>
+      <property name='df_LT.pluginName' value='EGit GitHub API Core'/>
+      <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+      <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+      <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      <property name='maven-groupId' value='org.eclipse.mylyn.github'/>
+      <property name='maven-artifactId' value='org.eclipse.egit.github.core'/>
+      <property name='maven-version' value='1.1.0-SNAPSHOT'/>
+    </properties>
+    <provides size='8'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.egit.github.core' version='1.1.0.201108021810'/>
+      <provided namespace='osgi.bundle' name='org.eclipse.egit.github.core' version='1.1.0.201108021810'/>
+      <provided namespace='java.package' name='org.eclipse.egit.github.core' version='1.1.0'/>
+      <provided namespace='java.package' name='org.eclipse.egit.github.core.client' version='1.1.0'/>
+      <provided namespace='java.package' name='org.eclipse.egit.github.core.service' version='1.1.0'/>
+      <provided namespace='java.package' name='org.eclipse.egit.github.core.util' version='1.1.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+    </provides>
+    <requires size='19'>
+      <required namespace='java.package' name='com.google.gson' range='[1.6.0,2.0.0)'/>
+      <required namespace='java.package' name='com.google.gson.annotations' range='[1.6.0,2.0.0)'/>
+      <required namespace='java.package' name='com.google.gson.reflect' range='[1.6.0,2.0.0)'/>
+      <required namespace='java.package' name='org.apache.http' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.auth' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.client' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.client.methods' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.client.protocol' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.client.utils' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.conn' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.conn.routing' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.entity' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.entity.mime' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.entity.mime.content' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.impl.auth' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.impl.client' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.impl.conn' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.message' range='[4.1.0,5.0.0)'/>
+      <required namespace='java.package' name='org.apache.http.protocol' range='[4.1.0,5.0.0)'/>
+    </requires>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='org.eclipse.egit.github.core' version='1.1.0.201108021810'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-Name: %pluginName&#xA;Bundle-Version: 1.1.0.201108021810&#xA;Import-Package: com.google.gson;version=&quot;[1.6.0,2.0.0)&quot;,com.google.gson.annotations;version=&quot;[1.6.0,2.0.0)&quot;,com.google.gson.reflect;version=&quot;[1.6.0,2.0.0)&quot;,org.apache.http;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.auth;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.client;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.client.methods;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.client.protocol;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.client.utils;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.conn;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.conn.routing;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.entity;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.entity.mime;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.entity.mime.content;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.impl.auth;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.impl.client;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.impl.conn;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.message;version=&quot;[4.1.0,5.0.0)&quot;,org.apache.http.protocol;version=&quot;[4.1.0,5.0.0)&quot;&#xA;Created-By: Apache Maven&#xA;Bundle-Vendor: %providerName&#xA;Archiver-Version: Plexus Archiver&#xA;Export-Package: org.eclipse.egit.github.core;version=&quot;1.1.0&quot;,org.eclipse.egit.github.core.client;version=&quot;1.1.0&quot;,org.eclipse.egit.github.core.service;version=&quot;1.1.0&quot;,org.eclipse.egit.github.core.util;version=&quot;1.1.0&quot;&#xA;Bundle-SymbolicName: org.eclipse.egit.github.core&#xA;Built-By: ksawicki&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.6.0_26&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Bundle-Localization: plugin&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>
