@@ -25,6 +25,10 @@ by the settings configuration property in `()`.
   * GitHub password used for API authentication
 * description
   * Description visible on the repository download page
+* includes
+  * Sub-elements will be treated as patterns to include from the `{project.build.directory` as downloads
+* excludes
+  * Sub-elements will be treated as patterns to exclude from the `{project.build.directory` as downloads
 * override (github.downloads.override)
   * true|false (default: false)
   * Whether existing downloads with the same name will be deleted before attempting to upload a new version
@@ -53,6 +57,12 @@ by the settings configuration property in `()`.
           <configuration>
             <description>Official build of the ${project.version} release</description>
             <override>true</override>
+            <excludes>
+              <exclude>**/unit-tests.jar
+            </excludes>
+            <includes>
+              <include>**/*.jar
+            </includes>
           </configuration>
           <goals>
             <goal>upload</goal>
