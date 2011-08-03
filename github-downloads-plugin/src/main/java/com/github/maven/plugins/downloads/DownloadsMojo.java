@@ -25,14 +25,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.egit.github.core.Download;
 import org.eclipse.egit.github.core.DownloadResource;
 import org.eclipse.egit.github.core.RepositoryId;
@@ -142,11 +146,26 @@ public class DownloadsMojo extends AbstractMojo {
 	private String host;
 
 	/**
+	 * Project being built
 	 * 
 	 * @parameter expression="${project}
 	 * @required
 	 */
 	private MavenProject project;
+
+	/**
+	 * Files to exclude
+	 * 
+	 * @parameter
+	 */
+	private String[] excludes;
+
+	/**
+	 * Files to include
+	 * 
+	 * @parameter
+	 */
+	private String[] includes;
 
 	/**
 	 * Get repository
@@ -214,13 +233,47 @@ public class DownloadsMojo extends AbstractMojo {
 		return message;
 	}
 
+	/**
+	 * Get files to create downloads
+	 * 
+	 * @return non-null but possibly empty list of files
+	 */
+	protected List<File> getFiles() {
+		List<File> files;
+		boolean hasIncludes = !isEmpty(includes);
+		boolean hasExcludes = !isEmpty(excludes);
+		if (hasIncludes || hasExcludes) {
+			files = new ArrayList<File>();
+			DirectoryScanner scanner = new DirectoryScanner();
+			String baseDir = project.getBuild().getDirectory();
+			scanner.setBasedir(baseDir);
+			if (hasIncludes)
+				scanner.setIncludes(includes);
+			if (hasExcludes)
+				scanner.setExcludes(excludes);
+			scanner.scan();
+			if (getLog().isDebugEnabled())
+				getLog().debug(
+						MessageFormat.format(
+								"Including {0} file(s) to upload: {1}",
+								scanner.getIncludedFiles().length,
+								Arrays.toString(scanner.getIncludedFiles())));
+			for (String path : scanner.getIncludedFiles())
+				files.add(new File(baseDir, path));
+		} else {
+			files = Collections.singletonList(project.getArtifact().getFile());
+		}
+		return files;
+	}
+
 	public void execute() throws MojoExecutionException {
 		final Log log = getLog();
 		final boolean debug = log.isDebugEnabled();
 
 		RepositoryId repository = getRepository();
 		if (repository == null)
-			throw new MojoExecutionException("No GitHub repository configured");
+			throw new MojoExecutionException(
+					"No GitHub repository (owner and name) configured");
 
 		DownloadService service = new DownloadService(createClient());
 
@@ -241,40 +294,40 @@ public class DownloadsMojo extends AbstractMojo {
 		else
 			existing = Collections.emptyMap();
 
-		File file = project.getArtifact().getFile();
-		final String name = file.getName();
+		for (File file : getFiles()) {
+			final String name = file.getName();
+			Integer existingId = existing.get(name);
+			if (existingId != null)
+				try {
+					if (debug)
+						log.debug(MessageFormat.format(
+								"Deleting existing download: {0} ({1})", name,
+								existingId));
+					service.deleteDownload(repository, existingId);
+				} catch (IOException e) {
+					throw new MojoExecutionException(
+							"Delete existing download failed: "
+									+ getExceptionMessage(e), e);
+				}
 
-		Integer existingId = existing.get(name);
-		if (existingId != null)
+			Download download = new Download();
+			download.setName(name);
+			if (!isEmpty(description))
+				download.setDescription(description);
+			download.setSize(file.length());
+			if (debug)
+				log.debug(MessageFormat.format(
+						"Creating download with name {0} and size {1}", name,
+						download.getSize()));
 			try {
-				if (debug)
-					log.debug(MessageFormat.format(
-							"Deleting existing download: {0} ({1})", name,
-							existingId));
-				service.deleteDownload(repository, existingId);
+				DownloadResource resource = service.createResource(repository,
+						download);
+				service.uploadResource(resource, new FileInputStream(file),
+						download.getSize());
 			} catch (IOException e) {
-				throw new MojoExecutionException(
-						"Delete existing download failed: "
-								+ getExceptionMessage(e), e);
+				throw new MojoExecutionException("Resource upload failed: "
+						+ getExceptionMessage(e), e);
 			}
-
-		Download download = new Download();
-		download.setName(name);
-		if (!isEmpty(description))
-			download.setDescription(description);
-		download.setSize(file.length());
-		if (debug)
-			log.debug(MessageFormat.format(
-					"Creating download with name {0} and size {1}", name,
-					download.getSize()));
-		try {
-			DownloadResource resource = service.createResource(repository,
-					download);
-			service.uploadResource(resource, new FileInputStream(file),
-					download.getSize());
-		} catch (IOException e) {
-			throw new MojoExecutionException("Resource upload failed: "
-					+ getExceptionMessage(e), e);
 		}
 	}
 }
