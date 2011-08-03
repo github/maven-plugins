@@ -1,6 +1,17 @@
 # GitHub Maven Plugins
 Collection of [Maven](http://maven.apache.org/) plugins that integrate with GitHub
 
+You can obtain the plugins by adding the following plugin repository element to your `pom.xml` file:
+
+```xml
+<pluginRepositories>
+  <pluginRepository>
+    <id>github-maven-plugins</id>
+    <url>http://github.github.com/maven-plugins/repository</url>
+  </pluginRepository>
+</pluginRepositories>
+```
+
 ## Downloads Plugin
 Maven plugin that creates and uploads a built resource to be available as a
 GitHub repository download.  The plugin is bound to the `upload` goal.
