@@ -42,8 +42,10 @@ by the settings configuration property in `()`.
   * Description visible on the repository download page
 * includes
   * Sub-elements will be treated as patterns to include from the `{project.build.directory` as downloads
+  * This element is optional and will default to create a download of the build's main artifact
 * excludes
   * Sub-elements will be treated as patterns to exclude from the `{project.build.directory` as downloads
+  * This element is optional and will default to create a download of the build's main artifact
 * override (github.downloads.override)
   * true | false (default: false)
   * Whether existing downloads with the same name will be deleted before attempting to upload a new version
