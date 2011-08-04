@@ -46,6 +46,9 @@ by the settings configuration property in `()`.
 * excludes
   * Sub-elements will be treated as patterns to exclude from the `{project.build.directory` as downloads
   * This element is optional and will default to create a download of the build's main artifact
+* includeAttached (github.downloads.includeAttached)
+  * true | false (default: false)
+  * Whether to create downloads from attached artifacts, by default only the main artifact is uploaded
 * override (github.downloads.override)
   * true | false (default: false)
   * Whether existing downloads with the same name will be deleted before attempting to upload a new version
