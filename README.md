@@ -41,10 +41,10 @@ by the settings configuration property in `()`.
 * description
   * Description visible on the repository download page
 * includes
-  * Sub-elements will be treated as patterns to include from the `{project.build.directory` as downloads
+  * Sub-elements will be treated as patterns to include from the `project.build.directory` as downloads
   * This element is optional and will default to create a download of the build's main artifact
 * excludes
-  * Sub-elements will be treated as patterns to exclude from the `{project.build.directory` as downloads
+  * Sub-elements will be treated as patterns to exclude from the `project.build.directory` as downloads
   * This element is optional and will default to create a download of the build's main artifact
 * includeAttached (github.downloads.includeAttached)
   * true | false (default: false)
@@ -77,12 +77,7 @@ by the settings configuration property in `()`.
           <configuration>
             <description>Official build of the ${project.version} release</description>
             <override>true</override>
-            <excludes>
-              <exclude>**/unit-tests.jar</exclude>
-            </excludes>
-            <includes>
-              <include>**/*.jar</include>
-            </includes>
+            <includeAttached>true</includeAttached>
           </configuration>
           <goals>
             <goal>upload</goal>
