@@ -7,6 +7,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GitHub Downloads Maven Plugin</name>
 	<url>https://github.com/github/maven-plugins</url>
+	<description>
+		Maven plugin that uploads built artifacts to be available as downloads
+		from a GitHub repository
+	</description>
 	<issueManagement>
 		<url>https://github.com/github/maven-plugins/issues</url>
 		<system>GitHub Issues</system>
