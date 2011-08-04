@@ -16,7 +16,9 @@ You can obtain the plugins by adding the following plugin repository element to 
 
 ## Downloads Plugin
 Maven plugin that creates and uploads a built resource to be available as a
-GitHub repository download.  The plugin is bound to the `upload` goal.
+GitHub repository download.  The plugin is bound to the `upload` goal by default.
+The plugin will upload the single build artifact by default but can be reconfigured
+to include/exclude files found in the build directory.
 
 ### Configuration
 The downloads plugin supports several configuration options that can either
@@ -43,7 +45,7 @@ by the settings configuration property in `()`.
 * excludes
   * Sub-elements will be treated as patterns to exclude from the `{project.build.directory` as downloads
 * override (github.downloads.override)
-  * true|false (default: false)
+  * true | false (default: false)
   * Whether existing downloads with the same name will be deleted before attempting to upload a new version
   * *Note:* Attempts to upload a download with the same name as one that already exists will fail unless this is set to true
 * repositoryName
