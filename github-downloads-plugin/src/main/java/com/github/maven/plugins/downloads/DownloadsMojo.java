@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -136,6 +137,13 @@ public class DownloadsMojo extends AbstractMojo {
 	private boolean override;
 
 	/**
+	 * Include attached artifacts
+	 * 
+	 * @parameter expression="${github.downloads.includeAttached}"
+	 */
+	private boolean includeAttached;
+
+	/**
 	 * Host for API calls
 	 * 
 	 * @parameter expression="${github.downloads.host}"
@@ -234,7 +242,7 @@ public class DownloadsMojo extends AbstractMojo {
 	 * @return non-null but possibly empty list of files
 	 */
 	protected List<File> getFiles() {
-		List<File> files;
+		List<File> files = new ArrayList<File>();
 		boolean hasIncludes = !isEmpty(includes);
 		boolean hasExcludes = !isEmpty(excludes);
 		if (hasIncludes || hasExcludes) {
@@ -252,9 +260,37 @@ public class DownloadsMojo extends AbstractMojo {
 						Arrays.toString(scanner.getIncludedFiles())));
 			for (String path : scanner.getIncludedFiles())
 				files.add(new File(baseDir, path));
-		} else
-			files = Collections.singletonList(project.getArtifact().getFile());
+		} else {
+			File file = getArtifactFile(project.getArtifact());
+			if (file != null)
+				files.add(file);
+			if (includeAttached) {
+				List<Artifact> attached = project.getAttachedArtifacts();
+				if (attached != null)
+					for (Artifact artifact : attached) {
+						file = getArtifactFile(artifact);
+						if (file != null)
+							files.add(file);
+					}
+			}
+			if (isDebug())
+				debug(MessageFormat.format("Artifact files to include: {0}",
+						files));
+		}
 		return files;
+	}
+
+	/**
+	 * Get file from artifact
+	 * 
+	 * @param artifact
+	 * @return existent artifact file or null
+	 */
+	protected File getArtifactFile(Artifact artifact) {
+		if (artifact == null)
+			return null;
+		File file = artifact.getFile();
+		return file != null && file.isFile() && file.exists() ? file : null;
 	}
 
 	/**
