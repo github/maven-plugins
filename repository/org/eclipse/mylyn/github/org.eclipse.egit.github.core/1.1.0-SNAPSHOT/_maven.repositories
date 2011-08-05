@@ -1,6 +1,0 @@
-#NOTE: This is an internal implementation file, its format can be changed without prior notice.
-#Tue Aug 02 18:10:27 PDT 2011
-org.eclipse.egit.github.core-1.1.0-SNAPSHOT.jar>=
-org.eclipse.egit.github.core-1.1.0-SNAPSHOT-p2artifacts.xml>=
-org.eclipse.egit.github.core-1.1.0-SNAPSHOT-p2metadata.xml>=
-org.eclipse.egit.github.core-1.1.0-SNAPSHOT.pom>=
