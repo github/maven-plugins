@@ -22,8 +22,10 @@
 package com.github.maven.plugins.downloads;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.github.maven.plugins.downloads.DownloadsMojo;
 
@@ -76,5 +78,19 @@ public class DownloadsMojoTest {
 		assertEquals("owner", repo.getOwner());
 		assertEquals("project", repo.getName());
 		assertEquals("owner/project", repo.generateId());
+	}
+
+	/**
+	 * Tests of {@link DownloadsMojo#isEmpty(String...)}
+	 */
+	@Test
+	public void isEmpty() {
+		assertTrue(DownloadsMojo.isEmpty((String[]) null));
+		assertTrue(DownloadsMojo.isEmpty(new String[0]));
+		assertTrue(DownloadsMojo.isEmpty((String) null));
+		assertTrue(DownloadsMojo.isEmpty(""));
+		assertTrue(DownloadsMojo.isEmpty("content", null));
+		assertTrue(DownloadsMojo.isEmpty("content", ""));
+		assertFalse(DownloadsMojo.isEmpty("content"));
 	}
 }
