@@ -144,6 +144,16 @@ public class DownloadsMojo extends AbstractMojo {
 	private boolean includeAttached;
 
 	/**
+	 * Show what downloads would be deleted and uploaded but don't actually
+	 * alter the current set of repository downloads. Showing what downloads
+	 * will be deleted does require still listing the current downloads
+	 * available from the repository.
+	 * 
+	 * @parameter expression="${github.downloads.dryRun}"
+	 */
+	private boolean dryRun;
+
+	/**
 	 * Host for API calls
 	 * 
 	 * @parameter expression="${github.downloads.host}"
@@ -205,13 +215,13 @@ public class DownloadsMojo extends AbstractMojo {
 			client = new GitHubClient(host, -1, IGitHubConstants.PROTOCOL_HTTPS);
 		else
 			client = new GitHubClient();
-		if (userName != null && password != null) {
+		if (!isEmpty(userName, password)) {
 			if (isDebug())
 				debug("Using basic authentication with username: " + userName);
 			client.setCredentials(userName, password);
-		} else if (oauth2Token != null) {
+		} else if (!isEmpty(oauth2Token)) {
 			if (isDebug())
-				debug("Using OAuth2 authentication");
+				debug("Using OAuth2 access token authentication");
 			client.setOAuth2Token(oauth2Token);
 		} else
 			throw new MojoExecutionException(
@@ -220,7 +230,7 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Get exception message for {@link IOException}
+	 * Get formatted exception message for {@link IOException}
 	 * 
 	 * @param e
 	 * @return message
@@ -237,7 +247,7 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Get files to create downloads
+	 * Get files to create downloads from
 	 * 
 	 * @return non-null but possibly empty list of files
 	 */
@@ -294,7 +304,7 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
-	 * If debug logging enabled?
+	 * Is debug logging enabled?
 	 * 
 	 * @return true if enabled, false otherwise
 	 */
@@ -303,9 +313,9 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
-	 * If info logging enabled?
+	 * Is info logging enabled?
 	 * 
-	 * @return true if enabled, false otherwse
+	 * @return true if enabled, false otherwise
 	 */
 	protected boolean isInfo() {
 		return getLog().isInfoEnabled();
@@ -375,7 +385,8 @@ public class DownloadsMojo extends AbstractMojo {
 			info(MessageFormat.format(
 					"Deleting existing download: {0} (id={1})", name,
 					Integer.toString(id)));
-			service.deleteDownload(repository, id);
+			if (!dryRun)
+				service.deleteDownload(repository, id);
 		} catch (IOException e) {
 			String prefix = MessageFormat.format(
 					"Deleting existing download {0} failed: ", name);
@@ -384,11 +395,13 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	public void execute() throws MojoExecutionException {
-
 		RepositoryId repository = getRepository();
 		if (repository == null)
 			throw new MojoExecutionException(
 					"No GitHub repository (owner and name) configured");
+		if (isDebug())
+			debug(MessageFormat.format("Using GitHub repository {0}",
+					repository.generateId()));
 
 		DownloadService service = new DownloadService(createClient());
 
@@ -399,6 +412,9 @@ public class DownloadsMojo extends AbstractMojo {
 			existing = Collections.emptyMap();
 
 		List<File> files = getFiles();
+
+		if (dryRun)
+			info("Dry run mode, downloads will not be deleted or uploaded");
 
 		int fileCount = files.size();
 		if (fileCount != 1)
@@ -426,17 +442,18 @@ public class DownloadsMojo extends AbstractMojo {
 				info(MessageFormat
 						.format("Adding download: {0} (1 byte)", name));
 
-			try {
-				DownloadResource resource = service.createResource(repository,
-						download);
-				service.uploadResource(resource, new FileInputStream(file),
-						size);
-			} catch (IOException e) {
-				String prefix = MessageFormat.format(
-						"Resource {0} upload failed: ", name);
-				throw new MojoExecutionException(prefix
-						+ getExceptionMessage(e), e);
-			}
+			if (!dryRun)
+				try {
+					DownloadResource resource = service.createResource(
+							repository, download);
+					service.uploadResource(resource, new FileInputStream(file),
+							size);
+				} catch (IOException e) {
+					String prefix = MessageFormat.format(
+							"Resource {0} upload failed: ", name);
+					throw new MojoExecutionException(prefix
+							+ getExceptionMessage(e), e);
+				}
 		}
 	}
 }
