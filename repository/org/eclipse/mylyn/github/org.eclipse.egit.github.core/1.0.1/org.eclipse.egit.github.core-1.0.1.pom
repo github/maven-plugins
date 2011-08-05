@@ -18,6 +18,9 @@
     <artifactId>org.eclipse.egit.github.core</artifactId>
     <packaging>jar</packaging>
     <name>Eclipse EGit GitHub API Core</name>
+    <build>
+        <sourceDirectory>src/</sourceDirectory>
+    </build>
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
