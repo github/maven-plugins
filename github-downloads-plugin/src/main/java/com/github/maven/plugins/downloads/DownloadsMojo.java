@@ -69,6 +69,22 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
+	 * Create an array with only the non-null and non-empty values
+	 * 
+	 * @param values
+	 * @return non-null but possibly empty array of non-null/non-empty strings
+	 */
+	public static String[] removeEmpties(final String... values) {
+		if (values == null || values.length == 0)
+			return new String[0];
+		List<String> validValues = new ArrayList<String>();
+		for (String value : values)
+			if (value != null && value.length() > 0)
+				validValues.add(value);
+		return validValues.toArray(new String[validValues.size()]);
+	}
+
+	/**
 	 * Extra repository id from given SCM URL
 	 * 
 	 * @param url
@@ -85,6 +101,27 @@ public class DownloadsMojo extends AbstractMojo {
 		url = url.substring(ghIndex + IGitHubConstants.HOST_DEFAULT.length()
 				+ 1, url.length() - IGitHubConstants.SUFFIX_GIT.length());
 		return RepositoryId.createFromId(url);
+	}
+
+	/**
+	 * Get matching paths found in given base directory
+	 * 
+	 * @param includes
+	 * @param excludes
+	 * @param baseDir
+	 * @return non-null but possibly empty array of string paths relative to the
+	 *         base directory
+	 */
+	public static String[] getMatchingPaths(String[] includes,
+			String[] excludes, String baseDir) {
+		DirectoryScanner scanner = new DirectoryScanner();
+		scanner.setBasedir(baseDir);
+		if (includes != null && includes.length > 0)
+			scanner.setIncludes(includes);
+		if (excludes != null && excludes.length > 0)
+			scanner.setExcludes(excludes);
+		scanner.scan();
+		return scanner.getIncludedFiles();
 	}
 
 	/**
@@ -253,22 +290,21 @@ public class DownloadsMojo extends AbstractMojo {
 	 */
 	protected List<File> getFiles() {
 		List<File> files = new ArrayList<File>();
-		boolean hasIncludes = !isEmpty(includes);
-		boolean hasExcludes = !isEmpty(excludes);
-		if (hasIncludes || hasExcludes) {
-			files = new ArrayList<File>();
-			DirectoryScanner scanner = new DirectoryScanner();
+		final String[] includePaths = removeEmpties(includes);
+		final String[] excludePaths = removeEmpties(excludes);
+		if (includePaths.length > 0 || excludePaths.length > 0) {
 			String baseDir = project.getBuild().getDirectory();
-			scanner.setBasedir(baseDir);
-			if (hasIncludes)
-				scanner.setIncludes(includes);
-			if (hasExcludes)
-				scanner.setExcludes(excludes);
-			scanner.scan();
+			if (isDebug())
+				debug(MessageFormat.format(
+						"Scanning {0} and including {1} and exluding {2}",
+						baseDir, Arrays.toString(includePaths),
+						Arrays.toString(excludePaths)));
+			String[] paths = getMatchingPaths(includePaths, excludePaths,
+					baseDir);
 			if (isDebug())
 				debug(MessageFormat.format("Scanned files to include: {0}",
-						Arrays.toString(scanner.getIncludedFiles())));
-			for (String path : scanner.getIncludedFiles())
+						Arrays.toString(paths)));
+			for (String path : paths)
 				files.add(new File(baseDir, path));
 		} else {
 			File file = getArtifactFile(project.getArtifact());
