@@ -49,6 +49,9 @@ by the settings configuration property in `()`.
 * includeAttached (github.downloads.includeAttached)
   * true | false (default: false)
   * Whether to create downloads from attached artifacts, by default only the main artifact is uploaded
+* dryRun (github.downloads.dryRun)
+  * true | false (default:false)
+  * Log what files *would* be uploaded and what existing downloads *would* be deleted without actually modifying the current downloads
 * override (github.downloads.override)
   * true | false (default: false)
   * Whether existing downloads with the same name will be deleted before attempting to upload a new version
