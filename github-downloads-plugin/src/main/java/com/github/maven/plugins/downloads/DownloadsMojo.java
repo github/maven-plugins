@@ -35,6 +35,7 @@ import java.util.Map;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.egit.github.core.Download;
@@ -345,7 +346,8 @@ public class DownloadsMojo extends AbstractMojo {
 	 * @return true if enabled, false otherwise
 	 */
 	protected boolean isDebug() {
-		return getLog().isDebugEnabled();
+		final Log log = getLog();
+		return log != null ? log.isDebugEnabled() : false;
 	}
 
 	/**
@@ -354,7 +356,8 @@ public class DownloadsMojo extends AbstractMojo {
 	 * @return true if enabled, false otherwise
 	 */
 	protected boolean isInfo() {
-		return getLog().isInfoEnabled();
+		final Log log = getLog();
+		return log != null ? log.isInfoEnabled() : false;
 	}
 
 	/**
@@ -363,7 +366,9 @@ public class DownloadsMojo extends AbstractMojo {
 	 * @param message
 	 */
 	protected void debug(String message) {
-		getLog().debug(message);
+		final Log log = getLog();
+		if (log != null)
+			log.debug(message);
 	}
 
 	/**
@@ -372,7 +377,9 @@ public class DownloadsMojo extends AbstractMojo {
 	 * @param message
 	 */
 	protected void info(String message) {
-		getLog().info(message);
+		final Log log = getLog();
+		if (log != null)
+			log.info(message);
 	}
 
 	/**
