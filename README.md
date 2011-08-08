@@ -75,6 +75,7 @@ by the settings configuration property in `()`.
     <plugin>
       <groupId>com.github.maven.plugins</groupId>
       <artifactId>github-downloads-plugin</artifactId>
+      <version>0.0.2</version>
       <executions>
         <execution>
           <configuration>
