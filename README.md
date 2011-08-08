@@ -76,22 +76,31 @@ by the settings configuration property in `()`.
       <groupId>com.github.maven.plugins</groupId>
       <artifactId>github-downloads-plugin</artifactId>
       <version>0.0.2</version>
-      <executions>
-        <execution>
-          <configuration>
-            <description>Official build of the ${project.version} release</description>
-            <override>true</override>
-            <includeAttached>true</includeAttached>
-          </configuration>
-          <goals>
-            <goal>upload</goal>
-          </goals>
-          <phase>install</phase>
-        </execution>
-      </executions>
+      <configuration>
+        <description>Official build of the ${project.version} release</description>
+        <override>true</override>
+        <includeAttached>true</includeAttached>
+      </configuration>
     </plugin>
   </plugins>
 </build>
+```
+
+To upload a built artifact run the following command:
+
+`$ mvn clean install ghDownloads:upload`
+
+You can also bind the upload goal to execute as part of a specific phase:
+
+```xml
+<executions>
+  <execution>
+    <goals>
+      <goal>upload</goal>
+    </goals>
+    <phase>install</phase>
+  </execution>
+</executions>
 ```
 
 #License
