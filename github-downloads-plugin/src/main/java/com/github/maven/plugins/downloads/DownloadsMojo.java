@@ -22,7 +22,6 @@
 package com.github.maven.plugins.downloads;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.egit.github.core.Download;
-import org.eclipse.egit.github.core.DownloadResource;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.client.IGitHubConstants;
@@ -487,10 +485,7 @@ public class DownloadsMojo extends AbstractMojo {
 
 			if (!dryRun)
 				try {
-					DownloadResource resource = service.createResource(
-							repository, download);
-					service.uploadResource(resource, new FileInputStream(file),
-							size);
+					service.createDownload(repository, download, file);
 				} catch (IOException e) {
 					String prefix = MessageFormat.format(
 							"Resource {0} upload failed: ", name);
