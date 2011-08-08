@@ -14,9 +14,9 @@
 
     <groupId>org.eclipse.mylyn.github</groupId>
     <version>1.0.1</version>
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.eclipse.egit.github.core</artifactId>
-    <packaging>jar</packaging>
     <name>Eclipse EGit GitHub API Core</name>
     <build>
         <sourceDirectory>src/</sourceDirectory>
