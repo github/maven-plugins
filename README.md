@@ -77,7 +77,7 @@ by the settings configuration property in `()`.
       <artifactId>github-downloads-plugin</artifactId>
       <version>0.0.2</version>
       <configuration>
-        <description>Official build of the ${project.version} release</description>
+        <description>${project.version} release of ${project.name}</description>
         <override>true</override>
         <includeAttached>true</includeAttached>
       </configuration>
