@@ -15,10 +15,11 @@ You can obtain the plugins by adding the following plugin repository element to 
 ```
 
 ## Downloads Plugin
-Maven plugin that creates and uploads a built resource to be available as a
-GitHub repository download.  The plugin is bound to the `upload` goal by default.
-The plugin will upload the single build artifact by default but can be reconfigured
-to include/exclude files found in the build directory.
+Maven plugin that creates and uploads built resources to be available as 
+GitHub repository downloads.  The plugin has an `upload` goal and is configured with
+a prefix of `ghDownloads`. The plugin will upload the single build artifact by default
+but can be reconfigured to include/exclude files found in the build directory or to
+include attached artifacts such as Javadoc jars or sources jars.
 
 ### Configuration
 The downloads plugin supports several configuration options that can either
@@ -27,7 +28,7 @@ you put the downloads-plugin settings depends on whether you want a specific
 setting to be configured globally or on a per-project basis.
 
 The notation belows shows the plugin configuration property name followed
-by the settings configuration property in `()`.
+by the settings configuration property in parentheses.
 
 * host (github.downloads.host)
   * Domain of GitHub API calls (defaults to `api.github.com`)
@@ -50,7 +51,7 @@ by the settings configuration property in `()`.
   * true | false (default: false)
   * Whether to create downloads from attached artifacts, by default only the main artifact is uploaded
 * dryRun (github.downloads.dryRun)
-  * true | false (default:false)
+  * true | false (default: false)
   * Log what files *would* be uploaded and what existing downloads *would* be deleted without actually modifying the current downloads
 * override (github.downloads.override)
   * true | false (default: false)
