@@ -160,6 +160,13 @@ public class SiteMojo extends GitHubProjectMojo {
 	private MavenProject project;
 
 	/**
+	 * Force reference update
+	 * 
+	 * @parameter
+	 */
+	private boolean force;
+
+	/**
 	 * Create blob
 	 * 
 	 * @param service
@@ -302,7 +309,7 @@ public class SiteMojo extends GitHubProjectMojo {
 					debug(MessageFormat.format("Updating ref from {0} to {1}",
 							commit.getParents().get(0).getSha(),
 							created.getSha()));
-				service.editReference(repository, ref);
+				service.editReference(repository, ref, force);
 			} catch (IOException e) {
 				throw new MojoExecutionException("Error editing reference", e);
 			}
