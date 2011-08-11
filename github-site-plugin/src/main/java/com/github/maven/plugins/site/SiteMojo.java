@@ -177,9 +177,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	 */
 	protected String createBlob(DataService service, RepositoryId repository,
 			String path) throws MojoExecutionException {
-		Blob blob = new Blob().setEncoding(Blob.ENCODING_BASE64);
 		File file = new File(outputDirectory, path);
-
 		final long length = file.length();
 		final int size = length > Integer.MAX_VALUE ? Integer.MAX_VALUE
 				: (int) length;
@@ -201,6 +199,8 @@ public class SiteMojo extends GitHubProjectMojo {
 					// Ignore
 				}
 		}
+
+		Blob blob = new Blob().setEncoding(Blob.ENCODING_BASE64);
 
 		try {
 			byte[] encoded = Blob.encodeBase64(output.toByteArray());
@@ -235,6 +235,11 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(excludePaths)));
 		String[] paths = PathUtils.getMatchingPaths(includePaths, excludePaths,
 				baseDir);
+		if (isInfo())
+			if (paths.length != 1)
+				info(MessageFormat.format("Creating {0} blobs", paths.length));
+			else
+				info("Creating 1 blob");
 		if (isDebug())
 			debug(MessageFormat.format("Scanned files to include: {0}",
 					Arrays.toString(paths)));
@@ -261,9 +266,14 @@ public class SiteMojo extends GitHubProjectMojo {
 		// Write tree
 		Tree tree;
 		try {
-			if (isDebug())
-				debug(MessageFormat.format("Creating tree with {0} entries",
-						entries.size()));
+			if (isInfo()) {
+				int size = entries.size();
+				if (size != 1)
+					info(MessageFormat.format(
+							"Creating tree with {0} blob entries", size));
+				else
+					info("Creating tree with 1 blob entry");
+			}
 			tree = service.createTree(repository, entries);
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error creating tree", e);
@@ -292,8 +302,8 @@ public class SiteMojo extends GitHubProjectMojo {
 		Commit created;
 		try {
 			created = service.createCommit(repository, commit);
-			if (isDebug())
-				debug(MessageFormat.format("Creating commit with SHA-1: {0}",
+			if (isInfo())
+				info(MessageFormat.format("Creating commit with SHA-1: {0}",
 						created.getSha()));
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error creating commit", e);
@@ -305,8 +315,9 @@ public class SiteMojo extends GitHubProjectMojo {
 			// Update existing reference
 			ref.setObject(object);
 			try {
-				if (isDebug())
-					debug(MessageFormat.format("Updating ref from {0} to {1}",
+				if (isInfo())
+					info(MessageFormat.format(
+							"Updating reference {0} from {1} to {2}", branch,
 							commit.getParents().get(0).getSha(),
 							created.getSha()));
 				service.editReference(repository, ref, force);
@@ -317,10 +328,10 @@ public class SiteMojo extends GitHubProjectMojo {
 			// Create new reference
 			ref = new Reference().setObject(object).setRef(branch);
 			try {
-				if (isDebug())
-					debug(MessageFormat.format(
-							"Creating reference starting at {0}",
-							created.getSha()));
+				if (isInfo())
+					info(MessageFormat.format(
+							"Creating reference {0} starting at commit {1}",
+							branch, created.getSha()));
 				service.createReference(repository, ref);
 			} catch (IOException e) {
 				throw new MojoExecutionException("Error creating reference", e);
