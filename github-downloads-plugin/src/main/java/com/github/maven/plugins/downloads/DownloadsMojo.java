@@ -21,6 +21,10 @@
  */
 package com.github.maven.plugins.downloads;
 
+import com.github.maven.plugins.core.GitHubProjectMojo;
+import com.github.maven.plugins.core.PathUtils;
+import com.github.maven.plugins.core.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -32,16 +36,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.egit.github.core.Download;
 import org.eclipse.egit.github.core.RepositoryId;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.IGitHubConstants;
-import org.eclipse.egit.github.core.client.RequestException;
 import org.eclipse.egit.github.core.service.DownloadService;
 
 /**
@@ -50,78 +48,7 @@ import org.eclipse.egit.github.core.service.DownloadService;
  * @author Kevin Sawicki (kevin@github.com)
  * @goal upload
  */
-public class DownloadsMojo extends AbstractMojo {
-
-	/**
-	 * Are any given values null or empty?
-	 * 
-	 * @param values
-	 * @return true if any null or empty, false otherwise
-	 */
-	public static boolean isEmpty(final String... values) {
-		if (values == null || values.length == 0)
-			return true;
-		for (String value : values)
-			if (value == null || value.length() == 0)
-				return true;
-		return false;
-	}
-
-	/**
-	 * Create an array with only the non-null and non-empty values
-	 * 
-	 * @param values
-	 * @return non-null but possibly empty array of non-null/non-empty strings
-	 */
-	public static String[] removeEmpties(final String... values) {
-		if (values == null || values.length == 0)
-			return new String[0];
-		List<String> validValues = new ArrayList<String>();
-		for (String value : values)
-			if (value != null && value.length() > 0)
-				validValues.add(value);
-		return validValues.toArray(new String[validValues.size()]);
-	}
-
-	/**
-	 * Extra repository id from given SCM URL
-	 * 
-	 * @param url
-	 * @return repository id or null if extraction fails
-	 */
-	public static RepositoryId extractRepositoryFromScmUrl(String url) {
-		if (isEmpty(url))
-			return null;
-		int ghIndex = url.indexOf(IGitHubConstants.HOST_DEFAULT);
-		if (ghIndex == -1 || ghIndex + 1 >= url.length())
-			return null;
-		if (!url.endsWith(IGitHubConstants.SUFFIX_GIT))
-			return null;
-		url = url.substring(ghIndex + IGitHubConstants.HOST_DEFAULT.length()
-				+ 1, url.length() - IGitHubConstants.SUFFIX_GIT.length());
-		return RepositoryId.createFromId(url);
-	}
-
-	/**
-	 * Get matching paths found in given base directory
-	 * 
-	 * @param includes
-	 * @param excludes
-	 * @param baseDir
-	 * @return non-null but possibly empty array of string paths relative to the
-	 *         base directory
-	 */
-	public static String[] getMatchingPaths(String[] includes,
-			String[] excludes, String baseDir) {
-		DirectoryScanner scanner = new DirectoryScanner();
-		scanner.setBasedir(baseDir);
-		if (includes != null && includes.length > 0)
-			scanner.setIncludes(includes);
-		if (excludes != null && excludes.length > 0)
-			scanner.setExcludes(excludes);
-		scanner.scan();
-		return scanner.getIncludedFiles();
-	}
+public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Owner of repository to upload to
@@ -197,14 +124,6 @@ public class DownloadsMojo extends AbstractMojo {
 	private String host;
 
 	/**
-	 * Project being built
-	 * 
-	 * @parameter expression="${project}
-	 * @required
-	 */
-	private MavenProject project;
-
-	/**
 	 * Files to exclude
 	 * 
 	 * @parameter
@@ -219,68 +138,12 @@ public class DownloadsMojo extends AbstractMojo {
 	private String[] includes;
 
 	/**
-	 * Get repository
+	 * Project being built
 	 * 
-	 * @return repository id or null if none configured
+	 * @parameter expression="${project}
+	 * @required
 	 */
-	protected RepositoryId getRepository() {
-		RepositoryId repo = null;
-		if (!isEmpty(repositoryOwner, repositoryName))
-			repo = RepositoryId.create(repositoryOwner, repositoryName);
-		if (repo == null && !isEmpty(project.getUrl()))
-			repo = RepositoryId.createFromUrl(project.getUrl());
-		if (repo == null && !isEmpty(project.getScm().getUrl()))
-			repo = RepositoryId.createFromUrl(project.getScm().getUrl());
-		if (repo == null)
-			repo = extractRepositoryFromScmUrl(project.getScm().getConnection());
-		if (repo == null)
-			repo = extractRepositoryFromScmUrl(project.getScm()
-					.getDeveloperConnection());
-		return repo;
-	}
-
-	/**
-	 * Create client
-	 * 
-	 * @return client
-	 * @throws MojoExecutionException
-	 */
-	protected GitHubClient createClient() throws MojoExecutionException {
-		GitHubClient client;
-		if (!isEmpty(host))
-			client = new GitHubClient(host, -1, IGitHubConstants.PROTOCOL_HTTPS);
-		else
-			client = new GitHubClient();
-		if (!isEmpty(userName, password)) {
-			if (isDebug())
-				debug("Using basic authentication with username: " + userName);
-			client.setCredentials(userName, password);
-		} else if (!isEmpty(oauth2Token)) {
-			if (isDebug())
-				debug("Using OAuth2 access token authentication");
-			client.setOAuth2Token(oauth2Token);
-		} else
-			throw new MojoExecutionException(
-					"No authentication credentials configured");
-		return client;
-	}
-
-	/**
-	 * Get formatted exception message for {@link IOException}
-	 * 
-	 * @param e
-	 * @return message
-	 */
-	protected String getExceptionMessage(IOException e) {
-		String message = null;
-		if (e instanceof RequestException) {
-			RequestException requestException = (RequestException) e;
-			message = Integer.toString(requestException.getStatus()) + " "
-					+ requestException.formatErrors();
-		} else
-			message = e.getMessage();
-		return message;
-	}
+	private MavenProject project;
 
 	/**
 	 * Get files to create downloads from
@@ -289,8 +152,8 @@ public class DownloadsMojo extends AbstractMojo {
 	 */
 	protected List<File> getFiles() {
 		List<File> files = new ArrayList<File>();
-		final String[] includePaths = removeEmpties(includes);
-		final String[] excludePaths = removeEmpties(excludes);
+		final String[] includePaths = StringUtils.removeEmpties(includes);
+		final String[] excludePaths = StringUtils.removeEmpties(excludes);
 		if (includePaths.length > 0 || excludePaths.length > 0) {
 			String baseDir = project.getBuild().getDirectory();
 			if (isDebug())
@@ -298,8 +161,8 @@ public class DownloadsMojo extends AbstractMojo {
 						"Scanning {0} and including {1} and exluding {2}",
 						baseDir, Arrays.toString(includePaths),
 						Arrays.toString(excludePaths)));
-			String[] paths = getMatchingPaths(includePaths, excludePaths,
-					baseDir);
+			String[] paths = PathUtils.getMatchingPaths(includePaths,
+					excludePaths, baseDir);
 			if (isDebug())
 				debug(MessageFormat.format("Scanned files to include: {0}",
 						Arrays.toString(paths)));
@@ -339,48 +202,6 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Is debug logging enabled?
-	 * 
-	 * @return true if enabled, false otherwise
-	 */
-	protected boolean isDebug() {
-		final Log log = getLog();
-		return log != null ? log.isDebugEnabled() : false;
-	}
-
-	/**
-	 * Is info logging enabled?
-	 * 
-	 * @return true if enabled, false otherwise
-	 */
-	protected boolean isInfo() {
-		final Log log = getLog();
-		return log != null ? log.isInfoEnabled() : false;
-	}
-
-	/**
-	 * Log given message at debug level
-	 * 
-	 * @param message
-	 */
-	protected void debug(String message) {
-		final Log log = getLog();
-		if (log != null)
-			log.debug(message);
-	}
-
-	/**
-	 * Log given message at info level
-	 * 
-	 * @param message
-	 */
-	protected void info(String message) {
-		final Log log = getLog();
-		if (log != null)
-			log.info(message);
-	}
-
-	/**
 	 * Get map of existing downloads with names mapped to download identifiers.
 	 * 
 	 * @param service
@@ -394,7 +215,7 @@ public class DownloadsMojo extends AbstractMojo {
 		try {
 			Map<String, Integer> existing = new HashMap<String, Integer>();
 			for (Download download : service.getDownloads(repository))
-				if (!isEmpty(download.getName()))
+				if (!StringUtils.isEmpty(download.getName()))
 					existing.put(download.getName(), download.getId());
 			if (isDebug()) {
 				final int size = existing.size();
@@ -436,15 +257,11 @@ public class DownloadsMojo extends AbstractMojo {
 	}
 
 	public void execute() throws MojoExecutionException {
-		RepositoryId repository = getRepository();
-		if (repository == null)
-			throw new MojoExecutionException(
-					"No GitHub repository (owner and name) configured");
-		if (isDebug())
-			debug(MessageFormat.format("Using GitHub repository {0}",
-					repository.generateId()));
+		RepositoryId repository = getRepository(project, repositoryOwner,
+				repositoryName);
 
-		DownloadService service = new DownloadService(createClient());
+		DownloadService service = new DownloadService(createClient(host,
+				userName, password, oauth2Token));
 
 		Map<String, Integer> existing;
 		if (override)
@@ -473,7 +290,7 @@ public class DownloadsMojo extends AbstractMojo {
 				deleteDownload(repository, name, existingId, service);
 
 			Download download = new Download().setName(name).setSize(size);
-			if (!isEmpty(description))
+			if (!StringUtils.isEmpty(description))
 				download.setDescription(description);
 
 			if (size != 1)
