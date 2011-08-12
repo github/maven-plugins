@@ -68,6 +68,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	 * User name for authentication
 	 * 
 	 * @parameter expression="${github.downloads.userName}"
+	 *            default-value="${github.global.userName}"
 	 */
 	private String userName;
 
@@ -75,6 +76,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	 * User name for authentication
 	 * 
 	 * @parameter expression="${github.downloads.password}"
+	 *            default-value="${github.global.password}"
 	 */
 	private String password;
 
@@ -89,6 +91,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	 * User name for authentication
 	 * 
 	 * @parameter expression="${github.downloads.oauth2Token}"
+	 *            default-value="${github.global.oauth2Token}"
 	 */
 	private String oauth2Token;
 
@@ -120,6 +123,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	 * Host for API calls
 	 * 
 	 * @parameter expression="${github.downloads.host}"
+	 *            default-value="${github.global.host}"
 	 */
 	private String host;
 
