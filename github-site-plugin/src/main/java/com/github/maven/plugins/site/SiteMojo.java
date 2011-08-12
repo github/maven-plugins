@@ -171,6 +171,15 @@ public class SiteMojo extends GitHubProjectMojo {
 	private boolean force;
 
 	/**
+	 * Show what blob, trees, commits, and references would be created/updated
+	 * but don't actually perform any operations on the target GitHub
+	 * repository.
+	 * 
+	 * @parameter expression="${github.site.dryRun}"
+	 */
+	private boolean dryRun;
+
+	/**
 	 * Create blob
 	 * 
 	 * @param service
@@ -219,7 +228,10 @@ public class SiteMojo extends GitHubProjectMojo {
 			if (isDebug())
 				debug(MessageFormat.format("Creating blob from {0}",
 						file.getAbsolutePath()));
-			return service.createBlob(repository, blob);
+			if (!dryRun)
+				return service.createBlob(repository, blob);
+			else
+				return null;
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error creating blob: "
 					+ getExceptionMessage(e), e);
@@ -229,6 +241,9 @@ public class SiteMojo extends GitHubProjectMojo {
 	public void execute() throws MojoExecutionException {
 		RepositoryId repository = getRepository(project, repositoryOwner,
 				repositoryName);
+
+		if (dryRun)
+			info("Dry run mode, repository will not be modified");
 
 		// Find files to include
 		String baseDir = outputDirectory.getAbsolutePath();
@@ -241,11 +256,10 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(excludePaths)));
 		String[] paths = PathUtils.getMatchingPaths(includePaths, excludePaths,
 				baseDir);
-		if (isInfo())
-			if (paths.length != 1)
-				info(MessageFormat.format("Creating {0} blobs", paths.length));
-			else
-				info("Creating 1 blob");
+		if (paths.length != 1)
+			info(MessageFormat.format("Creating {0} blobs", paths.length));
+		else
+			info("Creating 1 blob");
 		if (isDebug())
 			debug(MessageFormat.format("Scanned files to include: {0}",
 					Arrays.toString(paths)));
@@ -272,15 +286,16 @@ public class SiteMojo extends GitHubProjectMojo {
 		// Write tree
 		Tree tree;
 		try {
-			if (isInfo()) {
-				int size = entries.size();
-				if (size != 1)
-					info(MessageFormat.format(
-							"Creating tree with {0} blob entries", size));
-				else
-					info("Creating tree with 1 blob entry");
-			}
-			tree = service.createTree(repository, entries);
+			int size = entries.size();
+			if (size != 1)
+				info(MessageFormat.format(
+						"Creating tree with {0} blob entries", size));
+			else
+				info("Creating tree with 1 blob entry");
+			if (!dryRun)
+				tree = service.createTree(repository, entries);
+			else
+				tree = new Tree();
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error creating tree: "
 					+ getExceptionMessage(e), e);
@@ -310,10 +325,12 @@ public class SiteMojo extends GitHubProjectMojo {
 
 		Commit created;
 		try {
-			created = service.createCommit(repository, commit);
-			if (isInfo())
-				info(MessageFormat.format("Creating commit with SHA-1: {0}",
-						created.getSha()));
+			if (!dryRun)
+				created = service.createCommit(repository, commit);
+			else
+				created = new Commit();
+			info(MessageFormat.format("Creating commit with SHA-1: {0}",
+					created.getSha()));
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error creating commit: "
 					+ getExceptionMessage(e), e);
@@ -325,12 +342,11 @@ public class SiteMojo extends GitHubProjectMojo {
 			// Update existing reference
 			ref.setObject(object);
 			try {
-				if (isInfo())
-					info(MessageFormat.format(
-							"Updating reference {0} from {1} to {2}", branch,
-							commit.getParents().get(0).getSha(),
-							created.getSha()));
-				service.editReference(repository, ref, force);
+				info(MessageFormat.format(
+						"Updating reference {0} from {1} to {2}", branch,
+						commit.getParents().get(0).getSha(), created.getSha()));
+				if (!dryRun)
+					service.editReference(repository, ref, force);
 			} catch (IOException e) {
 				throw new MojoExecutionException("Error editing reference: "
 						+ getExceptionMessage(e), e);
@@ -339,11 +355,11 @@ public class SiteMojo extends GitHubProjectMojo {
 			// Create new reference
 			ref = new Reference().setObject(object).setRef(branch);
 			try {
-				if (isInfo())
-					info(MessageFormat.format(
-							"Creating reference {0} starting at commit {1}",
-							branch, created.getSha()));
-				service.createReference(repository, ref);
+				info(MessageFormat.format(
+						"Creating reference {0} starting at commit {1}",
+						branch, created.getSha()));
+				if (!dryRun)
+					service.createReference(repository, ref);
 			} catch (IOException e) {
 				throw new MojoExecutionException("Error creating reference: "
 						+ getExceptionMessage(e), e);
