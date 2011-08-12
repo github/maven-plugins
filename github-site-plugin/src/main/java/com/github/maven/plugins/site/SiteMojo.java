@@ -104,6 +104,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * User name for authentication
 	 * 
 	 * @parameter expression="${github.site.userName}"
+	 *            default-value="${github.global.userName}"
 	 */
 	private String userName;
 
@@ -111,6 +112,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * User name for authentication
 	 * 
 	 * @parameter expression="${github.site.password}"
+	 *            default-value="${github.global.password}"
 	 */
 	private String password;
 
@@ -118,6 +120,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * User name for authentication
 	 * 
 	 * @parameter expression="${github.site.oauth2Token}"
+	 *            default-value="${github.global.oauth2Token}"
 	 */
 	private String oauth2Token;
 
@@ -125,6 +128,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * Host for API calls
 	 * 
 	 * @parameter expression="${github.site.host}"
+	 *            default-value="${github.global.host}"
 	 */
 	private String host;
 
@@ -143,11 +147,11 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String[] excludes;
 
 	/**
-	 * Directory where the project sites and report distributions will be
-	 * generated.
+	 * Base directory to commit files from
 	 * 
 	 * @parameter expression="${siteOutputDirectory}"
 	 *            default-value="${project.reporting.outputDirectory}"
+	 * @required
 	 */
 	private File outputDirectory;
 
