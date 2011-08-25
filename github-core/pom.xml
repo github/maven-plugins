@@ -24,7 +24,7 @@
 
 	<repositories>
 		<repository>
-			<id>oss-sonatype-staging</id>
+			<id>oss-sonatype-snapshots</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
