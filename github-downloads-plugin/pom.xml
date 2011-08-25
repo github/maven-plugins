@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>com.github.maven.plugins</groupId>
 	<artifactId>github-downloads-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -11,27 +12,33 @@
 		Maven plugin that uploads built artifacts to be available as downloads
 		from a GitHub repository
 	</description>
+	
 	<issueManagement>
 		<url>https://github.com/github/maven-plugins/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
+	
 	<licenses>
 		<license>
 			<name>MIT License</name>
 			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	
 	<repositories>
 		<repository>
 			<id>github-plugin-dependencies</id>
 			<url>http://github.github.com/maven-plugins/repository</url>
 		</repository>
 	</repositories>
+	
 	<scm>
 		<url>https://github.com/github/maven-plugins</url>
 		<connection>scm:git:git://github.com/github/maven-plugins.git</connection>
 		<developerConnection>scm:git:git@github.com:github/maven-plugins.git</developerConnection>
 	</scm>
+	
 	<developers>
 		<developer>
 			<email>kevin@github.com</email>
@@ -40,9 +47,11 @@
 			<id>kevinsawicki</id>
 		</developer>
 	</developers>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -54,6 +63,7 @@
 			</plugin>
 		</plugins>
 	</build>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
