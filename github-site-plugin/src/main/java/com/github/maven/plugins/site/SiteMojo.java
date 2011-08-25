@@ -171,6 +171,14 @@ public class SiteMojo extends GitHubProjectMojo {
 	private boolean force;
 
 	/**
+	 * Merge with existing the existing tree that is referenced by the commit
+	 * that the ref currently points to
+	 * 
+	 * @parameter
+	 */
+	private boolean merge;
+
+	/**
 	 * Show what blob, trees, commits, and references would be created/updated
 	 * but don't actually perform any operations on the target GitHub
 	 * repository.
@@ -283,29 +291,6 @@ public class SiteMojo extends GitHubProjectMojo {
 			entries.add(entry);
 		}
 
-		// Write tree
-		Tree tree;
-		try {
-			int size = entries.size();
-			if (size != 1)
-				info(MessageFormat.format(
-						"Creating tree with {0} blob entries", size));
-			else
-				info("Creating tree with 1 blob entry");
-			if (!dryRun)
-				tree = service.createTree(repository, entries);
-			else
-				tree = new Tree();
-		} catch (IOException e) {
-			throw new MojoExecutionException("Error creating tree: "
-					+ getExceptionMessage(e), e);
-		}
-
-		// Build commit
-		Commit commit = new Commit();
-		commit.setMessage(message);
-		commit.setTree(tree);
-
 		Reference ref = null;
 		try {
 			ref = service.getReference(repository, branch);
@@ -317,6 +302,45 @@ public class SiteMojo extends GitHubProjectMojo {
 			throw new MojoExecutionException("Error getting reference: "
 					+ getExceptionMessage(e), e);
 		}
+
+		if (ref != null
+				&& !TypedResource.TYPE_COMMIT.equals(ref.getObject().getType()))
+			throw new MojoExecutionException(
+					MessageFormat
+							.format("Existing ref {0} points to a {1} ({2}) instead of a commmit",
+									ref.getRef(), ref.getObject().getType(),
+									ref.getObject().getSha()));
+
+		// Write tree
+		Tree tree;
+		try {
+			int size = entries.size();
+			if (size != 1)
+				info(MessageFormat.format(
+						"Creating tree with {0} blob entries", size));
+			else
+				info("Creating tree with 1 blob entry");
+			String baseTree = null;
+			if (merge && ref != null) {
+				Tree currentTree = service.getCommit(repository,
+						ref.getObject().getSha()).getTree();
+				if (currentTree != null)
+					baseTree = currentTree.getSha();
+				info(MessageFormat.format("Merging with tree {0}", baseTree));
+			}
+			if (!dryRun)
+				tree = service.createTree(repository, entries, baseTree);
+			else
+				tree = new Tree();
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error creating tree: "
+					+ getExceptionMessage(e), e);
+		}
+
+		// Build commit
+		Commit commit = new Commit();
+		commit.setMessage(message);
+		commit.setTree(tree);
 
 		// Set parent commit SHA-1 if reference exists
 		if (ref != null)
