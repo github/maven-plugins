@@ -166,7 +166,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	/**
 	 * Force reference update
 	 * 
-	 * @parameter
+	 * @parameter expression="${github.site.force}"
 	 */
 	private boolean force;
 
@@ -174,7 +174,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * Merge with existing the existing tree that is referenced by the commit
 	 * that the ref currently points to
 	 * 
-	 * @parameter
+	 * @parameter expression="${github.site.merge}"
 	 */
 	private boolean merge;
 
