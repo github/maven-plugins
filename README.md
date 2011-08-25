@@ -8,8 +8,8 @@ You can obtain the plugins by adding the following plugin repository element to 
 ```xml
 <pluginRepositories>
   <pluginRepository>
-    <id>github-maven-plugins</id>
-    <url>http://github.github.com/maven-plugins/repository</url>
+    <id>oss-sonatype-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
   </pluginRepository>
 </pluginRepositories>
 ```
