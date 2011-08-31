@@ -15,7 +15,6 @@
 	<name>GitHub Downloads Maven Plugin</name>
 	<url>https://github.com/github/maven-plugins</url>
 	<description>Maven plugin that uploads built artifacts to be available as downloads from a GitHub repository</description>
-	
 
 	<issueManagement>
 		<url>https://github.com/github/maven-plugins/issues</url>
@@ -64,6 +63,28 @@
 				<configuration>
 					<goalPrefix>ghDownloads</goalPrefix>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
