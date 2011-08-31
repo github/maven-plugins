@@ -2,15 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.maven.plugins</groupId>
-	<artifactId>github-site-plugin</artifactId>
+	<groupId>com.github.github</groupId>
+	<artifactId>site-maven-plugin</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 	<name>GitHub Site Maven Plugin</name>
 	<url>https://github.com/github/maven-plugins</url>
-	<description>
-		Maven plugin that commits files to a branch in a GitHub repository
-	</description>
+	<description>Maven plugin that commits files to a branch in a GitHub repository</description>
 
 	<issueManagement>
 		<url>https://github.com/github/maven-plugins/issues</url>

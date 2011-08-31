@@ -2,16 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.maven.plugins</groupId>
-	<artifactId>github-downloads-plugin</artifactId>
+	<groupId>com.github.github</groupId>
+	<artifactId>downloads-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<version>0.0.3-SNAPSHOT</version>
 	<name>GitHub Downloads Maven Plugin</name>
 	<url>https://github.com/github/maven-plugins</url>
-	<description>
-		Maven plugin that uploads built artifacts to be available as downloads
-		from a GitHub repository
-	</description>
+	<description>Maven plugin that uploads built artifacts to be available as downloads from a GitHub repository</description>
+	
 
 	<issueManagement>
 		<url>https://github.com/github/maven-plugins/issues</url>
