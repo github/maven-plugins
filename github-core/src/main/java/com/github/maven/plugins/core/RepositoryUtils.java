@@ -21,9 +21,12 @@
  */
 package com.github.maven.plugins.core;
 
+import static org.eclipse.egit.github.core.client.IGitHubConstants.HOST_DEFAULT;
+import static org.eclipse.egit.github.core.client.IGitHubConstants.SUFFIX_GIT;
+
+import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.egit.github.core.RepositoryId;
-import org.eclipse.egit.github.core.client.IGitHubConstants;
 
 /**
  * Repository utilities
@@ -41,13 +44,13 @@ public class RepositoryUtils {
 	public static RepositoryId extractRepositoryFromScmUrl(String url) {
 		if (StringUtils.isEmpty(url))
 			return null;
-		int ghIndex = url.indexOf(IGitHubConstants.HOST_DEFAULT);
+		int ghIndex = url.indexOf(HOST_DEFAULT);
 		if (ghIndex == -1 || ghIndex + 1 >= url.length())
 			return null;
-		if (!url.endsWith(IGitHubConstants.SUFFIX_GIT))
+		if (!url.endsWith(SUFFIX_GIT))
 			return null;
-		url = url.substring(ghIndex + IGitHubConstants.HOST_DEFAULT.length()
-				+ 1, url.length() - IGitHubConstants.SUFFIX_GIT.length());
+		url = url.substring(ghIndex + HOST_DEFAULT.length() + 1, url.length()
+				- SUFFIX_GIT.length());
 		return RepositoryId.createFromId(url);
 	}
 
@@ -62,6 +65,7 @@ public class RepositoryUtils {
 	 */
 	public static RepositoryId getRepository(final MavenProject project,
 			final String owner, final String name) {
+		// Use owner and name if specified
 		if (!StringUtils.isEmpty(owner, name))
 			return RepositoryId.create(owner, name);
 
@@ -69,16 +73,22 @@ public class RepositoryUtils {
 			return null;
 
 		RepositoryId repo = null;
-		if (repo == null && !StringUtils.isEmpty(project.getUrl()))
+		// Check project URL first and if null move on to SCM URLs
+		if (!StringUtils.isEmpty(project.getUrl()))
 			repo = RepositoryId.createFromUrl(project.getUrl());
-		if (repo == null && !StringUtils.isEmpty(project.getScm().getUrl()))
-			repo = RepositoryId.createFromUrl(project.getScm().getUrl());
+		if (repo != null)
+			return repo;
+
+		// Extract repository from SCM URLs if present
+		final Scm scm = project.getScm();
+		if (scm == null)
+			return null;
+		if (!StringUtils.isEmpty(scm.getUrl()))
+			repo = RepositoryId.createFromUrl(scm.getUrl());
 		if (repo == null)
-			repo = extractRepositoryFromScmUrl(project.getScm().getConnection());
+			repo = extractRepositoryFromScmUrl(scm.getConnection());
 		if (repo == null)
-			repo = extractRepositoryFromScmUrl(project.getScm()
-					.getDeveloperConnection());
+			repo = extractRepositoryFromScmUrl(scm.getDeveloperConnection());
 		return repo;
 	}
-
 }
