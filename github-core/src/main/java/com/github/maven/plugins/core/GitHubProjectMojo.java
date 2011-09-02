@@ -112,7 +112,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Log given mesasge and throwable at info level
+	 * Log given message and throwable at info level
 	 * 
 	 * @param message
 	 * @param throwable
