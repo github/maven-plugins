@@ -89,6 +89,18 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	}
 
 	/**
+	 * Log given message and throwable at debug level
+	 * 
+	 * @param message
+	 * @param throwable
+	 */
+	protected void debug(String message, Throwable throwable) {
+		final Log log = getLog();
+		if (log != null)
+			log.debug(message, throwable);
+	}
+
+	/**
 	 * Log given message at info level
 	 * 
 	 * @param message
@@ -97,6 +109,18 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 		final Log log = getLog();
 		if (log != null)
 			log.info(message);
+	}
+
+	/**
+	 * Log given mesasge and throwable at info level
+	 * 
+	 * @param message
+	 * @param throwable
+	 */
+	protected void info(String message, Throwable throwable) {
+		final Log log = getLog();
+		if (log != null)
+			log.info(message, throwable);
 	}
 
 	/**

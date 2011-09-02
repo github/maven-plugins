@@ -223,8 +223,8 @@ public class SiteMojo extends GitHubProjectMojo {
 			if (stream != null)
 				try {
 					stream.close();
-				} catch (IOException ignored) {
-					// Ignore
+				} catch (IOException e) {
+					debug("Exception closing stream", e);
 				}
 		}
 
