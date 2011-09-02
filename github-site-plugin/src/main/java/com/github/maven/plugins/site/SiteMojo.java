@@ -21,6 +21,13 @@
  */
 package com.github.maven.plugins.site;
 
+import static java.lang.Integer.MAX_VALUE;
+import static org.eclipse.egit.github.core.Blob.ENCODING_BASE64;
+import static org.eclipse.egit.github.core.TreeEntry.MODE_BLOB;
+import static org.eclipse.egit.github.core.TreeEntry.TYPE_BLOB;
+import static org.eclipse.egit.github.core.client.IGitHubConstants.CHARSET_UTF8;
+import static org.eclipse.egit.github.core.TypedResource.*;
+
 import com.github.maven.plugins.core.GitHubProjectMojo;
 import com.github.maven.plugins.core.PathUtils;
 import com.github.maven.plugins.core.StringUtils;
@@ -45,9 +52,9 @@ import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.Tree;
 import org.eclipse.egit.github.core.TreeEntry;
 import org.eclipse.egit.github.core.TypedResource;
-import org.eclipse.egit.github.core.client.IGitHubConstants;
 import org.eclipse.egit.github.core.client.RequestException;
 import org.eclipse.egit.github.core.service.DataService;
+import org.eclipse.egit.github.core.util.EncodingUtils;
 
 /**
  * Mojo which copies files to a GitHub repository branch. This directly uses the
@@ -200,8 +207,7 @@ public class SiteMojo extends GitHubProjectMojo {
 			String path) throws MojoExecutionException {
 		File file = new File(outputDirectory, path);
 		final long length = file.length();
-		final int size = length > Integer.MAX_VALUE ? Integer.MAX_VALUE
-				: (int) length;
+		final int size = length > MAX_VALUE ? MAX_VALUE : (int) length;
 		ByteArrayOutputStream output = new ByteArrayOutputStream(size);
 		FileInputStream stream = null;
 		try {
@@ -222,11 +228,11 @@ public class SiteMojo extends GitHubProjectMojo {
 				}
 		}
 
-		Blob blob = new Blob().setEncoding(Blob.ENCODING_BASE64);
+		Blob blob = new Blob().setEncoding(ENCODING_BASE64);
 
 		try {
-			byte[] encoded = Blob.encodeBase64(output.toByteArray());
-			blob.setContent(new String(encoded, IGitHubConstants.CHARSET_UTF8));
+			byte[] encoded = EncodingUtils.toBase64(output.toByteArray());
+			blob.setContent(new String(encoded, CHARSET_UTF8));
 		} catch (UnsupportedEncodingException e) {
 			throw new MojoExecutionException("Error encoding blob contents: "
 					+ getExceptionMessage(e), e);
@@ -285,8 +291,8 @@ public class SiteMojo extends GitHubProjectMojo {
 		for (String path : paths) {
 			TreeEntry entry = new TreeEntry();
 			entry.setPath(prefix + path);
-			entry.setType(TreeEntry.TYPE_BLOB);
-			entry.setMode(TreeEntry.MODE_BLOB);
+			entry.setType(TYPE_BLOB);
+			entry.setMode(MODE_BLOB);
 			entry.setSha(createBlob(service, repository, path));
 			entries.add(entry);
 		}
@@ -303,8 +309,7 @@ public class SiteMojo extends GitHubProjectMojo {
 					+ getExceptionMessage(e), e);
 		}
 
-		if (ref != null
-				&& !TypedResource.TYPE_COMMIT.equals(ref.getObject().getType()))
+		if (ref != null && !TYPE_COMMIT.equals(ref.getObject().getType()))
 			throw new MojoExecutionException(
 					MessageFormat
 							.format("Existing ref {0} points to a {1} ({2}) instead of a commmit",
@@ -361,7 +366,7 @@ public class SiteMojo extends GitHubProjectMojo {
 		}
 
 		TypedResource object = new TypedResource();
-		object.setType(TypedResource.TYPE_COMMIT).setSha(created.getSha());
+		object.setType(TYPE_COMMIT).setSha(created.getSha());
 		if (ref != null) {
 			// Update existing reference
 			ref.setObject(object);
