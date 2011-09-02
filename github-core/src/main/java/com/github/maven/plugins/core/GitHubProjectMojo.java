@@ -30,7 +30,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.IGitHubConstants;
 import org.eclipse.egit.github.core.client.RequestException;
 
 /**
@@ -137,7 +136,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 			String password, String oauth2Token) throws MojoExecutionException {
 		GitHubClient client;
 		if (!StringUtils.isEmpty(host))
-			client = new GitHubClient(host, -1, IGitHubConstants.PROTOCOL_HTTPS);
+			client = new GitHubClient(host);
 		else
 			client = new GitHubClient();
 		if (!StringUtils.isEmpty(userName, password)) {
