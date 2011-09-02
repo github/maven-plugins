@@ -30,7 +30,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.RequestException;
 
 /**
  * Base GitHub Mojo class to be extended.
@@ -46,14 +45,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * @return message
 	 */
 	public static String getExceptionMessage(IOException e) {
-		String message = null;
-		if (e instanceof RequestException) {
-			RequestException requestException = (RequestException) e;
-			message = Integer.toString(requestException.getStatus()) + " "
-					+ requestException.formatErrors();
-		} else
-			message = e.getMessage();
-		return message;
+		return e.getMessage();
 	}
 
 	/**
