@@ -288,6 +288,12 @@ public class SiteMojo extends GitHubProjectMojo {
 			prefix = "";
 		if (prefix.length() > 0 && !prefix.endsWith("/"))
 			prefix += "/";
+
+		// Convert separator to forward slash '/'
+		if ('\\' == File.separatorChar)
+			for (int i = 0; i < paths.length; i++)
+				paths[i] = paths[i].replace('\\', '/');
+
 		for (String path : paths) {
 			TreeEntry entry = new TreeEntry();
 			entry.setPath(prefix + path);
