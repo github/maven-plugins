@@ -9,7 +9,7 @@
 
 	<groupId>com.github.github</groupId>
 	<artifactId>site-maven-plugin</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 	<name>GitHub Site Maven Plugin</name>
 	<url>https://github.com/github/maven-plugins</url>
