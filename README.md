@@ -31,7 +31,7 @@ by the settings configuration property in parentheses.
 
 * host (github.global.host)
   * Domain of GitHub API calls (defaults to `api.github.com`)
-* oauth2Token (github.global.oauth2token)
+* oauth2Token (github.global.oauth2Token)
   * OAuth2 access token for API authentication
   * [More about GitHub OAuth support](http://developer.github.com/v3/oauth/)
 * userName (github.global.userName)
