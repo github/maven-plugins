@@ -128,6 +128,14 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	private String host;
 
 	/**
+	 * Suffix to append to all uploaded files. The configured suffix will go
+	 * before the file extension.
+	 * 
+	 * @parameter expression="${github.downloads.suffix}"
+	 */
+	private String suffix;
+
+	/**
 	 * Files to exclude
 	 * 
 	 * @parameter
@@ -287,7 +295,16 @@ public class DownloadsMojo extends GitHubProjectMojo {
 					repository.generateId()));
 
 		for (File file : files) {
-			final String name = file.getName();
+			String name = file.getName();
+			if (!StringUtils.isEmpty(suffix)) {
+				final int lastDot = name.lastIndexOf('.');
+				if (lastDot != -1)
+					name = name.substring(0, lastDot) + suffix
+							+ name.substring(lastDot);
+				else
+					name += suffix;
+			}
+
 			final long size = file.length();
 			Integer existingId = existing.get(name);
 			if (existingId != null)
