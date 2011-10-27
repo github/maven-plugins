@@ -141,7 +141,7 @@
 				<artifactId>site-maven-plugin</artifactId>
 				<version>0.2</version>
 				<configuration>
-					<message>Generated site for ${artifactId} ${project.version}</message>
+					<message>Generated site for ${project.artifactId} ${project.version}</message>
 					<path>downloads-plugin</path>
 					<merge>true</merge>
 				</configuration>
