@@ -51,7 +51,7 @@ inferred from the following properties if not specified
  * `project.scm.connection`
  * `project.scm.developerConnection`
 
-## Downloads Plugin
+## [Downloads Plugin](http://github.github.com/maven-plugins/downloads-plugin)
 Maven plugin that creates and uploads built resources to be available as 
 GitHub repository downloads.  The plugin has an `upload` goal and is configured
 with a goal prefix of `ghDownloads`. The plugin will upload the single build
@@ -87,6 +87,9 @@ sources jars.
     attempting to upload a new version
   * *Note:* Attempts to upload a download with the same name as one that already
     exists will fail unless this is set to true
+* suffix
+  * String to be appended after file name but before file extension for uploaded files
+  * A suffix of `-master` would cause artifacts to be uploaded as `myartifact-1.0-master.jar`
 
 ### Example
 ```xml
@@ -123,7 +126,7 @@ You can also bind the upload goal to execute as part of a specific phase:
 </executions>
 ```
 
-## Site Plugin
+## [Site Plugin](http://github.github.com/maven-plugins/site-plugin)
 Maven plugin that commits files generated and updates a specific branch
 reference in a GitHub repository.  This plugin can be used to deploy a created
 Maven site to a `gh-pages` branch so that it can be served statically as a
