@@ -74,21 +74,21 @@ public class SiteMojo extends GitHubProjectMojo {
 	/**
 	 * Branch to update
 	 * 
-	 * @parameter expression="${branch}"
+	 * @parameter default-value="refs/heads/gh-pages"
 	 */
 	private String branch = BRANCH_DEFAULT;
 
 	/**
 	 * Path of tree
 	 * 
-	 * @parameter expression="${path}"
+	 * @parameter
 	 */
 	private String path;
 
 	/**
 	 * Commit message
 	 * 
-	 * @parameter expression="${message}"
+	 * @parameter
 	 * @required
 	 */
 	private String message;
