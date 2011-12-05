@@ -9,7 +9,7 @@
 
 	<groupId>com.github.github</groupId>
 	<artifactId>github-maven-core</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<name>GitHub Core Maven Library</name>
 	<description>Core library for GitHub Maven plugins</description>
 	<url>https://github.com/github/maven-plugins</url>
