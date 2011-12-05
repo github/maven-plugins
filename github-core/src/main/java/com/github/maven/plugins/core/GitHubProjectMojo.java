@@ -127,9 +127,11 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	protected GitHubClient createClient(String host, String userName,
 			String password, String oauth2Token) throws MojoExecutionException {
 		GitHubClient client;
-		if (!StringUtils.isEmpty(host))
+		if (!StringUtils.isEmpty(host)) {
+			if (isDebug())
+				debug("Using custom host: " + host);
 			client = new GitHubClient(host);
-		else
+		} else
 			client = new GitHubClient();
 		if (!StringUtils.isEmpty(userName, password)) {
 			if (isDebug())
