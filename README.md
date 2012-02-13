@@ -163,6 +163,11 @@ prefix of `ghSite`.
   * true | false (default: false)
   * Log what blobs, tree, and commits *would* be created without actually
     creating them
+* noJekyll (github.site.noJekyll)
+  * true | false (default: false)
+  * Whether to always create a `.nojekyll` file at the root of the site if one
+    doesn't already exist.  This setting should be enabled if your site contains
+    any folders that begin with an underscore.
 
 ### Example
 ```xml
