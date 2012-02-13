@@ -72,6 +72,11 @@ public class SiteMojo extends GitHubProjectMojo {
 	public static final String BRANCH_DEFAULT = "refs/heads/gh-pages";
 
 	/**
+	 * NO_JEKYLL_FILE
+	 */
+	public static final String NO_JEKYLL_FILE = ".nojekyll";
+
+	/**
 	 * Branch to update
 	 * 
 	 * @parameter default-value="refs/heads/gh-pages"
@@ -178,6 +183,14 @@ public class SiteMojo extends GitHubProjectMojo {
 	private boolean force;
 
 	/**
+	 * True to always create a '.nojekyll' file at the root of the site if one
+	 * doesn't already exist.
+	 * 
+	 * @parameter expression="${github.site.noJekyll}"
+	 */
+	private boolean noJekyll;
+
+	/**
 	 * Merge with existing the existing tree that is referenced by the commit
 	 * that the ref currently points to
 	 * 
@@ -259,6 +272,26 @@ public class SiteMojo extends GitHubProjectMojo {
 		if (dryRun)
 			info("Dry run mode, repository will not be modified");
 
+		if (noJekyll) {
+			// Create '.nojekyll' at root of site if one does not already exist
+			File noJekyllFile = new File(outputDirectory, NO_JEKYLL_FILE);
+			if (!noJekyllFile.exists())
+				try {
+					if (isDebug())
+						debug(MessageFormat.format(
+								"Creating '.nojekyll file in {0}",
+								outputDirectory.getAbsolutePath()));
+					if (!noJekyllFile.createNewFile())
+						throw new MojoExecutionException(MessageFormat.format(
+								"Unable to create .nojekyll file in {0}",
+								outputDirectory.getAbsolutePath()));
+				} catch (IOException e) {
+					throw new MojoExecutionException(MessageFormat.format(
+							"Unable to create .nojekyll file in {0}",
+							outputDirectory.getAbsolutePath()), e);
+				}
+		}
+
 		// Find files to include
 		String baseDir = outputDirectory.getAbsolutePath();
 		String[] includePaths = StringUtils.removeEmpties(includes);
@@ -270,6 +303,26 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(excludePaths)));
 		String[] paths = PathUtils.getMatchingPaths(includePaths, excludePaths,
 				baseDir);
+
+		// Ensure a '.nojekyll' file is always created at root of tree if
+		// setting is enabled
+		if (noJekyll) {
+			boolean containsNoJekyll = false;
+			for (String path : paths) {
+				if (NO_JEKYLL_FILE.equals(path)) {
+					containsNoJekyll = true;
+					break;
+				}
+			}
+			// Add '.nojekyll' file if not present
+			if (!containsNoJekyll) {
+				String[] extendedPaths = new String[paths.length + 1];
+				System.arraycopy(paths, 0, extendedPaths, 1, paths.length);
+				extendedPaths[0] = NO_JEKYLL_FILE;
+				paths = extendedPaths;
+			}
+		}
+
 		if (paths.length != 1)
 			info(MessageFormat.format("Creating {0} blobs", paths.length));
 		else
