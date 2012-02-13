@@ -98,7 +98,7 @@ sources jars.
     <plugin>
       <groupId>com.github.github</groupId>
       <artifactId>downloads-maven-plugin</artifactId>
-      <version>0.3</version>
+      <version>0.4</version>
       <configuration>
         <description>${project.version} release of ${project.name}</description>
         <override>true</override>
@@ -176,7 +176,7 @@ prefix of `ghSite`.
     <plugin>
       <groupId>com.github.github</groupId>
       <artifactId>site-maven-plugin</artifactId>
-      <version>0.3</version>
+      <version>0.5</version>
       <configuration>
         <message>Creating site for ${project.version}</message>
       </configuration>
