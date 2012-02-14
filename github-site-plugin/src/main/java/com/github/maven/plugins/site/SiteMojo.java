@@ -308,12 +308,11 @@ public class SiteMojo extends GitHubProjectMojo {
 		// setting is enabled
 		if (noJekyll) {
 			boolean containsNoJekyll = false;
-			for (String path : paths) {
+			for (String path : paths)
 				if (NO_JEKYLL_FILE.equals(path)) {
 					containsNoJekyll = true;
 					break;
 				}
-			}
 			// Add '.nojekyll' file if not present
 			if (!containsNoJekyll) {
 				String[] extendedPaths = new String[paths.length + 1];
