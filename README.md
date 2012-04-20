@@ -57,10 +57,10 @@ by the settings configuration property in parentheses.
 *Note:* `repositoryOwner` property and `repositoryName` are optional and will be
 inferred from the following properties if not specified
 
- * `project.url`
  * `project.scm.url`
  * `project.scm.connection`
  * `project.scm.developerConnection`
+ * `project.url`
 
 ## [Downloads Plugin](http://github.github.com/maven-plugins/downloads-plugin)
 Maven plugin that creates and uploads built resources to be available as 
