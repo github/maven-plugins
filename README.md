@@ -4,17 +4,8 @@ Collection of [Maven](http://maven.apache.org/) plugins that integrate with GitH
 These plugins are built on top of [API v3](http://developer.github.com/) through the
 [GitHub Java library](https://github.com/eclipse/egit-github/tree/master/org.eclipse.egit.github.core).
 
-Released builds are available from [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ccom.github.github)
-and snapshots can be obtained by adding the following plugin repository element to
-your `pom.xml` file:
+Released builds are available from [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ccom.github.github).
 
-```xml
-<pluginRepositories>
-  <pluginRepository>
-    <id>oss-sonatype-snapshots</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-  </pluginRepository>
-</pluginRepositories>
 ```
 
 ## Core Configuration
