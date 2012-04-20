@@ -76,8 +76,7 @@ public class RepositoryUtils {
 		// Extract repository from SCM URLs first if present
 		final Scm scm = project.getScm();
 		if (scm != null) {
-			if (!StringUtils.isEmpty(scm.getUrl()))
-				repo = RepositoryId.createFromUrl(scm.getUrl());
+			repo = RepositoryId.createFromUrl(scm.getUrl());
 			if (repo == null)
 				repo = extractRepositoryFromScmUrl(scm.getConnection());
 			if (repo == null)
@@ -85,7 +84,7 @@ public class RepositoryUtils {
 		}
 
 		// Check project URL last
-		if (repo == null && !StringUtils.isEmpty(project.getUrl()))
+		if (repo == null)
 			repo = RepositoryId.createFromUrl(project.getUrl());
 
 		return repo;
