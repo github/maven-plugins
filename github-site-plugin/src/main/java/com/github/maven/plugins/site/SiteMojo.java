@@ -25,8 +25,7 @@ import static java.lang.Integer.MAX_VALUE;
 import static org.eclipse.egit.github.core.Blob.ENCODING_BASE64;
 import static org.eclipse.egit.github.core.TreeEntry.MODE_BLOB;
 import static org.eclipse.egit.github.core.TreeEntry.TYPE_BLOB;
-import static org.eclipse.egit.github.core.client.IGitHubConstants.CHARSET_UTF8;
-import static org.eclipse.egit.github.core.TypedResource.*;
+import static org.eclipse.egit.github.core.TypedResource.TYPE_COMMIT;
 
 import com.github.maven.plugins.core.GitHubProjectMojo;
 import com.github.maven.plugins.core.PathUtils;
@@ -36,7 +35,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -242,14 +240,8 @@ public class SiteMojo extends GitHubProjectMojo {
 		}
 
 		Blob blob = new Blob().setEncoding(ENCODING_BASE64);
-
-		try {
-			byte[] encoded = EncodingUtils.toBase64(output.toByteArray());
-			blob.setContent(new String(encoded, CHARSET_UTF8));
-		} catch (UnsupportedEncodingException e) {
-			throw new MojoExecutionException("Error encoding blob contents: "
-					+ getExceptionMessage(e), e);
-		}
+		String encoded = EncodingUtils.toBase64(output.toByteArray());
+		blob.setContent(encoded);
 
 		try {
 			if (isDebug())
