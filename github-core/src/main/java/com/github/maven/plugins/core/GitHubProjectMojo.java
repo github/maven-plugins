@@ -136,9 +136,9 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 		if (!StringUtils.isEmpty(host)) {
 			if (isDebug())
 				debug("Using custom host: " + host);
-			client = new GitHubClient(host);
+			client = createClient(host);
 		} else
-			client = new GitHubClient();
+			client = createClient();
 
 		if (configureUsernamePassword(client, userName, password)
 				|| configureOAuth2Token(client, oauth2Token)
@@ -147,6 +147,29 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 		else
 			throw new MojoExecutionException(
 					"No authentication credentials configured");
+	}
+
+	/**
+	 * Create client
+	 * <p>
+	 * Subclasses can override to do any custom client configuration
+	 * 
+	 * @param hostname
+	 * @return non-null client
+	 */
+	protected GitHubClient createClient(String hostname) {
+		return new GitHubClient(hostname);
+	}
+
+	/**
+	 * Create client
+	 * <p>
+	 * Subclasses can override to do any custom client configuration
+	 * 
+	 * @return non-null client
+	 */
+	protected GitHubClient createClient() {
+		return new GitHubClient();
 	}
 
 	/**
