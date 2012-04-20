@@ -6,8 +6,6 @@ These plugins are built on top of [API v3](http://developer.github.com/) through
 
 Released builds are available from [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ccom.github.github).
 
-```
-
 ## Core Configuration
 
 The plugins support several configuration options that can either be expressed
