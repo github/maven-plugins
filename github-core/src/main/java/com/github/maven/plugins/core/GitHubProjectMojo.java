@@ -198,6 +198,9 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	protected boolean configureServerCredentials(final GitHubClient client,
 			final String serverId, final Settings settings)
 			throws MojoExecutionException {
+		if (StringUtils.isEmpty(serverId))
+			return false;
+
 		Server server = getServer(settings, serverId);
 		if (server == null)
 			throw new MojoExecutionException(MessageFormat.format(
@@ -261,12 +264,11 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * 
 	 * @param settings
 	 * @param serverId
+	 *            must be non-null and non-empty
 	 * @return server or null if none matching
 	 */
 	protected Server getServer(final Settings settings, final String serverId) {
 		if (settings == null)
-			return null;
-		if (StringUtils.isEmpty(serverId))
 			return null;
 		List<Server> servers = settings.getServers();
 		if (servers == null || servers.isEmpty())
