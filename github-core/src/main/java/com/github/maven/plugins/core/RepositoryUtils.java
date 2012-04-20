@@ -88,8 +88,6 @@ public class RepositoryUtils {
 		if (repo == null && !StringUtils.isEmpty(project.getUrl()))
 			repo = RepositoryId.createFromUrl(project.getUrl());
 
-		if (repo != null)
-			return repo;
 		return repo;
 	}
 }
