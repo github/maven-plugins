@@ -73,22 +73,23 @@ public class RepositoryUtils {
 			return null;
 
 		RepositoryId repo = null;
-		// Check project URL first and if null move on to SCM URLs
-		if (!StringUtils.isEmpty(project.getUrl()))
+		// Extract repository from SCM URLs first if present
+		final Scm scm = project.getScm();
+		if (scm != null) {
+			if (!StringUtils.isEmpty(scm.getUrl()))
+				repo = RepositoryId.createFromUrl(scm.getUrl());
+			if (repo == null)
+				repo = extractRepositoryFromScmUrl(scm.getConnection());
+			if (repo == null)
+				repo = extractRepositoryFromScmUrl(scm.getDeveloperConnection());
+		}
+
+		// Check project URL last
+		if (repo == null && !StringUtils.isEmpty(project.getUrl()))
 			repo = RepositoryId.createFromUrl(project.getUrl());
+
 		if (repo != null)
 			return repo;
-
-		// Extract repository from SCM URLs if present
-		final Scm scm = project.getScm();
-		if (scm == null)
-			return null;
-		if (!StringUtils.isEmpty(scm.getUrl()))
-			repo = RepositoryId.createFromUrl(scm.getUrl());
-		if (repo == null)
-			repo = extractRepositoryFromScmUrl(scm.getConnection());
-		if (repo == null)
-			repo = extractRepositoryFromScmUrl(scm.getDeveloperConnection());
 		return repo;
 	}
 }
