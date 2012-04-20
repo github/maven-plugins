@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.Blob;
 import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.Reference;
@@ -143,6 +144,14 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String host;
 
 	/**
+	 * Id of server to use
+	 * 
+	 * @parameter expression="${github.site.server}"
+	 *            default-value="${github.global.server}"
+	 */
+	private String server;
+
+	/**
 	 * Paths and patterns to include
 	 * 
 	 * @parameter
@@ -172,6 +181,13 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * @required
 	 */
 	private MavenProject project;
+
+	/**
+	 * Settings
+	 * 
+	 * @parameter expression="${settings}
+	 */
+	private Settings settings;
 
 	/**
 	 * Force reference update
@@ -323,7 +339,7 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(paths)));
 
 		DataService service = new DataService(createClient(host, userName,
-				password, oauth2Token));
+				password, oauth2Token, server, settings));
 
 		// Write blobs and build tree entries
 		List<TreeEntry> entries = new ArrayList<TreeEntry>(paths.length);

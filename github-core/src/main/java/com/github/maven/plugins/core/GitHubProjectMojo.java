@@ -23,11 +23,14 @@ package com.github.maven.plugins.core;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
 
@@ -121,11 +124,14 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * @param userName
 	 * @param password
 	 * @param oauth2Token
+	 * @param serverId
+	 * @param settings
 	 * @return client
 	 * @throws MojoExecutionException
 	 */
 	protected GitHubClient createClient(String host, String userName,
-			String password, String oauth2Token) throws MojoExecutionException {
+			String password, String oauth2Token, String serverId,
+			Settings settings) throws MojoExecutionException {
 		GitHubClient client;
 		if (!StringUtils.isEmpty(host)) {
 			if (isDebug())
@@ -133,18 +139,98 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 			client = new GitHubClient(host);
 		} else
 			client = new GitHubClient();
-		if (!StringUtils.isEmpty(userName, password)) {
-			if (isDebug())
-				debug("Using basic authentication with username: " + userName);
-			client.setCredentials(userName, password);
-		} else if (!StringUtils.isEmpty(oauth2Token)) {
-			if (isDebug())
-				debug("Using OAuth2 access token authentication");
-			client.setOAuth2Token(oauth2Token);
-		} else
+
+		if (configureUsernamePassword(client, userName, password)
+				|| configureOAuth2Token(client, oauth2Token)
+				|| configureServerCredentials(client, serverId, settings))
+			return client;
+		else
 			throw new MojoExecutionException(
 					"No authentication credentials configured");
-		return client;
+	}
+
+	/**
+	 * Configure credentials from configured username/password combination
+	 * 
+	 * @param client
+	 * @param userName
+	 * @param password
+	 * @return true if configured, false otherwise
+	 */
+	protected boolean configureUsernamePassword(final GitHubClient client,
+			final String userName, final String password) {
+		if (StringUtils.isEmpty(userName, password))
+			return false;
+
+		if (isDebug())
+			debug("Using basic authentication with username: " + userName);
+		client.setCredentials(userName, password);
+		return true;
+	}
+
+	/**
+	 * Configure credentials from configured OAuth2 token
+	 * 
+	 * @param client
+	 * @param oauth2Token
+	 * @return true if configured, false otherwise
+	 */
+	protected boolean configureOAuth2Token(final GitHubClient client,
+			final String oauth2Token) {
+		if (StringUtils.isEmpty(oauth2Token))
+			return false;
+
+		if (isDebug())
+			debug("Using OAuth2 access token authentication");
+		client.setOAuth2Token(oauth2Token);
+		return true;
+	}
+
+	/**
+	 * Configure client with credentials from given server id
+	 * 
+	 * @param client
+	 * @param serverId
+	 * @param settings
+	 * @return true if configured, false otherwise
+	 * @throws MojoExecutionException
+	 */
+	protected boolean configureServerCredentials(final GitHubClient client,
+			final String serverId, final Settings settings)
+			throws MojoExecutionException {
+		Server server = getServer(settings, serverId);
+		if (server == null)
+			throw new MojoExecutionException(MessageFormat.format(
+					"Server ''{0}'' not found in settings", serverId));
+
+		if (isDebug())
+			debug(MessageFormat.format("Using ''{0}'' server credentials",
+					serverId));
+
+		String serverUsername = server.getUsername();
+		String serverPassword = server.getPassword();
+
+		if (!StringUtils.isEmpty(serverUsername, serverPassword)) {
+			if (isDebug())
+				debug("Using basic authentication with username: "
+						+ serverUsername);
+			client.setCredentials(serverUsername, serverPassword);
+			return true;
+		}
+
+		// A server password without a username is assumed to be an OAuth2 token
+		if (!StringUtils.isEmpty(serverPassword)) {
+			if (isDebug())
+				debug("Using OAuth2 access token authentication");
+			client.setOAuth2Token(serverPassword);
+			return true;
+		}
+
+		if (isDebug())
+			debug(MessageFormat.format(
+					"Server ''{0}'' is missing username/password credentials",
+					serverId));
+		return false;
 	}
 
 	/**
@@ -156,8 +242,9 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * @return non-null repository id
 	 * @throws MojoExecutionException
 	 */
-	protected RepositoryId getRepository(MavenProject project, String owner,
-			String name) throws MojoExecutionException {
+	protected RepositoryId getRepository(final MavenProject project,
+			final String owner, final String name)
+			throws MojoExecutionException {
 		RepositoryId repository = RepositoryUtils.getRepository(project, owner,
 				name);
 		if (repository == null)
@@ -167,5 +254,27 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 			debug(MessageFormat.format("Using GitHub repository {0}",
 					repository.generateId()));
 		return repository;
+	}
+
+	/**
+	 * Get server with given id
+	 * 
+	 * @param settings
+	 * @param serverId
+	 * @return server or null if none matching
+	 */
+	protected Server getServer(final Settings settings, final String serverId) {
+		if (settings == null)
+			return null;
+		if (StringUtils.isEmpty(serverId))
+			return null;
+		List<Server> servers = settings.getServers();
+		if (servers == null || servers.isEmpty())
+			return null;
+
+		for (Server server : servers)
+			if (serverId.equals(server.getId()))
+				return server;
+		return null;
 	}
 }

@@ -38,6 +38,7 @@ import java.util.Map;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.Download;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.service.DownloadService;
@@ -136,6 +137,14 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	private String suffix;
 
 	/**
+	 * Id of server to use
+	 * 
+	 * @parameter expression="${github.downloads.server}"
+	 *            default-value="${github.global.server}"
+	 */
+	private String server;
+
+	/**
 	 * Files to exclude
 	 * 
 	 * @parameter
@@ -156,6 +165,13 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	 * @required
 	 */
 	private MavenProject project;
+
+	/**
+	 * Settings
+	 * 
+	 * @parameter expression="${settings}
+	 */
+	private Settings settings;
 
 	/**
 	 * Get files to create downloads from
@@ -273,7 +289,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 				repositoryName);
 
 		DownloadService service = new DownloadService(createClient(host,
-				userName, password, oauth2Token));
+				userName, password, oauth2Token, server, settings));
 
 		Map<String, Integer> existing;
 		if (override)
