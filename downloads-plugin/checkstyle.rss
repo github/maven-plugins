@@ -6,10 +6,10 @@
     <link>https://github.com/github/maven-plugins</link>
     <description>GitHub Downloads Maven Plugin - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2011</copyright>
+    <copyright>&#169;2012</copyright>
     <item>
       <title>File: 1,
-             Errors: 308,
+             Errors: 324,
              Warnings: 0,
              Infos: 0
       </title>
@@ -38,7 +38,7 @@
                   0
                 </td>
                 <td>
-                  308
+                  324
                 </td>
               </tr>
                       </tbody>
