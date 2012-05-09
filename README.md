@@ -51,6 +51,24 @@ inferred from the following properties if not specified
  * `project.scm.developerConnection`
  * `project.url`
 
+### Example 
+#### in settings.xml
+```xml
+  <servers>
+   <server>
+    <id>github</id>
+    <username>aGitHubUser</username>
+    <password>pwd</password>
+   </server>
+  </servers>
+```
+#### in pom.xml
+```xml
+  <properties>
+    <github.global.server>github</github.global.server>
+  </properties>
+```
+ 
 ## [Downloads Plugin](http://github.github.com/maven-plugins/downloads-plugin)
 Maven plugin that creates and uploads built resources to be available as 
 GitHub repository downloads.  The plugin has an `upload` goal and is configured
