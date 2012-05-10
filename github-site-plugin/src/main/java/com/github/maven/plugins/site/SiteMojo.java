@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -181,6 +182,13 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * @required
 	 */
 	private MavenProject project;
+
+	/**
+	 * Session
+	 * 
+	 * @parameter expression="${session}
+	 */
+	private MavenSession session;
 
 	/**
 	 * Settings
@@ -339,7 +347,7 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(paths)));
 
 		DataService service = new DataService(createClient(host, userName,
-				password, oauth2Token, server, settings));
+				password, oauth2Token, server, settings, session));
 
 		// Write blobs and build tree entries
 		List<TreeEntry> entries = new ArrayList<TreeEntry>(paths.length);
