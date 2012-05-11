@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
@@ -56,9 +57,10 @@ public class CustomHostnameTest {
 
 		public GitHubClient createClient(String host, String userName,
 				String password, String oauth2Token, String serverId,
-				Settings settings) throws MojoExecutionException {
+				Settings settings, MavenSession session)
+				throws MojoExecutionException {
 			return super.createClient(host, userName, password, oauth2Token,
-					serverId, settings);
+					serverId, settings, session);
 		}
 
 		public void execute() throws MojoExecutionException,
@@ -75,8 +77,8 @@ public class CustomHostnameTest {
 	@Test
 	public void validHostname() throws Exception {
 		TestMojo mojo = new TestMojo();
-		GitHubClient client = mojo
-				.createClient("h", "a", "b", null, null, null);
+		GitHubClient client = mojo.createClient("h", "a", "b", null, null,
+				null, null);
 		assertNotNull(client);
 		assertEquals("h", mojo.host.get());
 	}
@@ -90,7 +92,7 @@ public class CustomHostnameTest {
 	public void nullHostname() throws Exception {
 		TestMojo mojo = new TestMojo();
 		GitHubClient client = mojo.createClient(null, "a", "b", null, null,
-				null);
+				null, null);
 		assertNotNull(client);
 		assertNull(mojo.host.get());
 	}
@@ -103,7 +105,8 @@ public class CustomHostnameTest {
 	@Test
 	public void emptyHost() throws Exception {
 		TestMojo mojo = new TestMojo();
-		GitHubClient client = mojo.createClient("", "a", "b", null, null, null);
+		GitHubClient client = mojo.createClient("", "a", "b", null, null, null,
+				null);
 		assertNotNull(client);
 		assertNull(mojo.host.get());
 	}

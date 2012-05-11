@@ -129,19 +129,14 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * @param oauth2Token
 	 * @param serverId
 	 * @param settings
+	 * @param session
 	 * @return client
 	 * @throws MojoExecutionException
 	 */
 	protected GitHubClient createClient(String host, String userName,
 			String password, String oauth2Token, String serverId,
-			Settings settings) throws MojoExecutionException {
-		return createClient(host, userName, password, oauth2Token,
-			serverId, settings, null);
-	}
-
-	protected GitHubClient createClient(String host, String userName,
-			String password, String oauth2Token, String serverId,
-			Settings settings, MavenSession mavenSession) throws MojoExecutionException {
+			Settings settings, MavenSession session)
+			throws MojoExecutionException {
 		GitHubClient client;
 		if (!StringUtils.isEmpty(host)) {
 			if (isDebug())
@@ -152,7 +147,8 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 		if (configureUsernamePassword(client, userName, password)
 				|| configureOAuth2Token(client, oauth2Token)
-				|| configureServerCredentials(client, serverId, settings, mavenSession))
+				|| configureServerCredentials(client, serverId, settings,
+						session))
 			return client;
 		else
 			throw new MojoExecutionException(
@@ -225,19 +221,12 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * @param client
 	 * @param serverId
 	 * @param settings
+	 * @param session
 	 * @return true if configured, false otherwise
 	 * @throws MojoExecutionException
 	 */
 	protected boolean configureServerCredentials(final GitHubClient client,
-			final String serverId, final Settings settings)
-			throws MojoExecutionException {
-		return configureServerCredentials(client, serverId, settings,
-			null);
-	}
-
-	protected boolean configureServerCredentials(final GitHubClient client,
-			final String serverId, final Settings settings,
-			MavenSession mavenSession)
+			final String serverId, final Settings settings, MavenSession session)
 			throws MojoExecutionException {
 		if (StringUtils.isEmpty(serverId))
 			return false;
@@ -245,10 +234,11 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 		String serverUsername = null;
 		String serverPassword = null;
 
-		if (mavenSession != null) {
+		if (session != null) {
 			RemoteRepository dummyRepo = new RemoteRepository();
 			dummyRepo.setId(serverId);
-			Authentication authInfo = mavenSession.getRepositorySession().getAuthenticationSelector().getAuthentication(dummyRepo);
+			Authentication authInfo = session.getRepositorySession()
+					.getAuthenticationSelector().getAuthentication(dummyRepo);
 			if (authInfo != null) {
 				serverUsername = authInfo.getUsername();
 				serverPassword = authInfo.getPassword();
@@ -259,11 +249,11 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 			Server server = getServer(settings, serverId);
 			if (server == null)
 				throw new MojoExecutionException(MessageFormat.format(
-					"Server ''{0}'' not found in settings", serverId));
+						"Server ''{0}'' not found in settings", serverId));
 
 			if (isDebug())
 				debug(MessageFormat.format("Using ''{0}'' server credentials",
-					serverId));
+						serverId));
 
 			serverUsername = server.getUsername();
 			serverPassword = server.getPassword();
