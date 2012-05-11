@@ -244,7 +244,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 			}
 		}
 
-		if (serverUsername == null) {
+		if (StringUtils.isEmpty(serverPassword)) {
 			Server server = getServer(settings, serverId);
 			if (server == null)
 				throw new MojoExecutionException(MessageFormat.format(
