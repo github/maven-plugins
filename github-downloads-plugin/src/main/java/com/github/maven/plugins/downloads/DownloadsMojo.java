@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -167,6 +168,13 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	private MavenProject project;
 
 	/**
+	 * Session
+	 * 
+	 * @parameter expression="${session}
+	 */
+	private MavenSession session;
+
+	/**
 	 * Settings
 	 * 
 	 * @parameter expression="${settings}
@@ -289,7 +297,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 				repositoryName);
 
 		DownloadService service = new DownloadService(createClient(host,
-				userName, password, oauth2Token, server, settings));
+				userName, password, oauth2Token, server, settings, session));
 
 		Map<String, Integer> existing;
 		if (override)
