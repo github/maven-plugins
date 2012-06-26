@@ -28,12 +28,14 @@ import com.github.maven.plugins.core.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
@@ -186,8 +188,8 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	 * 
 	 * @return non-null but possibly empty list of files
 	 */
-	protected List<File> getFiles() {
-		List<File> files = new ArrayList<File>();
+	protected Collection<File> getFiles() {
+		Set<File> files = new LinkedHashSet<File>();
 		final String[] includePaths = StringUtils.removeEmpties(includes);
 		final String[] excludePaths = StringUtils.removeEmpties(excludes);
 		if (includePaths.length > 0 || excludePaths.length > 0) {
@@ -305,7 +307,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 		else
 			existing = Collections.emptyMap();
 
-		List<File> files = getFiles();
+		Collection<File> files = getFiles();
 
 		if (dryRun)
 			info("Dry run mode, downloads will not be deleted or uploaded");
