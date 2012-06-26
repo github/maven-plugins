@@ -288,26 +288,6 @@ public class SiteMojo extends GitHubProjectMojo {
 		if (dryRun)
 			info("Dry run mode, repository will not be modified");
 
-		if (noJekyll) {
-			// Create '.nojekyll' at root of site if one does not already exist
-			File noJekyllFile = new File(outputDirectory, NO_JEKYLL_FILE);
-			if (!noJekyllFile.exists())
-				try {
-					if (isDebug())
-						debug(MessageFormat.format(
-								"Creating '.nojekyll file in {0}",
-								outputDirectory.getAbsolutePath()));
-					if (!noJekyllFile.createNewFile())
-						throw new MojoExecutionException(MessageFormat.format(
-								"Unable to create .nojekyll file in {0}",
-								outputDirectory.getAbsolutePath()));
-				} catch (IOException e) {
-					throw new MojoExecutionException(MessageFormat.format(
-							"Unable to create .nojekyll file in {0}",
-							outputDirectory.getAbsolutePath()), e);
-				}
-		}
-
 		// Find files to include
 		String baseDir = outputDirectory.getAbsolutePath();
 		String[] includePaths = StringUtils.removeEmpties(includes);
@@ -319,24 +299,6 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(excludePaths)));
 		String[] paths = PathUtils.getMatchingPaths(includePaths, excludePaths,
 				baseDir);
-
-		// Ensure a '.nojekyll' file is always created at root of tree if
-		// setting is enabled
-		if (noJekyll) {
-			boolean containsNoJekyll = false;
-			for (String path : paths)
-				if (NO_JEKYLL_FILE.equals(path)) {
-					containsNoJekyll = true;
-					break;
-				}
-			// Add '.nojekyll' file if not present
-			if (!containsNoJekyll) {
-				String[] extendedPaths = new String[paths.length + 1];
-				System.arraycopy(paths, 0, extendedPaths, 1, paths.length);
-				extendedPaths[0] = NO_JEKYLL_FILE;
-				paths = extendedPaths;
-			}
-		}
 
 		if (paths.length != 1)
 			info(MessageFormat.format("Creating {0} blobs", paths.length));
@@ -362,12 +324,37 @@ public class SiteMojo extends GitHubProjectMojo {
 			for (int i = 0; i < paths.length; i++)
 				paths[i] = paths[i].replace('\\', '/');
 
+		boolean createNoJekyll = noJekyll;
+
 		for (String path : paths) {
 			TreeEntry entry = new TreeEntry();
 			entry.setPath(prefix + path);
+			// Only create a .nojekyll file if it doesn't already exist
+			if (createNoJekyll && NO_JEKYLL_FILE.equals(entry.getPath()))
+				createNoJekyll = false;
 			entry.setType(TYPE_BLOB);
 			entry.setMode(MODE_BLOB);
 			entry.setSha(createBlob(service, repository, path));
+			entries.add(entry);
+		}
+
+		if (createNoJekyll) {
+			TreeEntry entry = new TreeEntry();
+			entry.setPath(NO_JEKYLL_FILE);
+			entry.setType(TYPE_BLOB);
+			entry.setMode(MODE_BLOB);
+
+			if (isDebug())
+				debug("Creating empty .nojekyll blob at root of tree");
+			if (!dryRun)
+				try {
+					entry.setSha(service.createBlob(repository, new Blob()
+							.setEncoding(ENCODING_BASE64).setContent("")));
+				} catch (IOException e) {
+					throw new MojoExecutionException(
+							"Error creating .nojekyll empty blob: "
+									+ getExceptionMessage(e), e);
+				}
 			entries.add(entry);
 		}
 
