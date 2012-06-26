@@ -332,7 +332,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 			}
 
 			final long size = file.length();
-			Integer existingId = existing.get(name);
+			Integer existingId = existing.remove(name);
 			if (existingId != null)
 				deleteDownload(repository, name, existingId, service);
 
