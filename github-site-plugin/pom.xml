@@ -9,7 +9,7 @@
 
 	<groupId>com.github.github</groupId>
 	<artifactId>site-maven-plugin</artifactId>
-	<version>0.7-SNAPSHOT</version>
+	<version>0.7</version>
 	<packaging>maven-plugin</packaging>
 	<name>GitHub Site Maven Plugin</name>
 	<url>https://github.com/github/maven-plugins</url>
@@ -209,7 +209,7 @@
 		<dependency>
 			<groupId>com.github.github</groupId>
 			<artifactId>github-maven-core</artifactId>
-			<version>0.5-SNAPSHOT</version>
+			<version>0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
