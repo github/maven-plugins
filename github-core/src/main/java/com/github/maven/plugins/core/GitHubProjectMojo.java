@@ -34,6 +34,7 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.RemoteRepository;
 
@@ -235,12 +236,16 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 		String serverPassword = null;
 
 		if (session != null) {
-			Authentication authInfo = session.getRepositorySession()
-					.getAuthenticationSelector()
-					.getAuthentication(new RemoteRepository().setId(serverId));
-			if (authInfo != null) {
-				serverUsername = authInfo.getUsername();
-				serverPassword = authInfo.getPassword();
+			RepositorySystemSession systemSession = session
+					.getRepositorySession();
+			if (systemSession != null) {
+				Authentication authInfo = systemSession
+						.getAuthenticationSelector().getAuthentication(
+								new RemoteRepository().setId(serverId));
+				if (authInfo != null) {
+					serverUsername = authInfo.getUsername();
+					serverPassword = authInfo.getPassword();
+				}
 			}
 		}
 
