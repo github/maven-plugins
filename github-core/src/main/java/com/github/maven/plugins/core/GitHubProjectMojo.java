@@ -21,10 +21,6 @@
  */
 package com.github.maven.plugins.core;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.List;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,6 +33,15 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.RemoteRepository;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.List;
+
+import static org.eclipse.egit.github.core.client.IGitHubConstants.PROTOCOL_HTTPS;
+import static org.eclipse.egit.github.core.client.IGitHubConstants.SUBDOMAIN_API;
 
 /**
  * Base GitHub Mojo class to be extended.
@@ -164,9 +169,18 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * @param hostname
 	 * @return non-null client
 	 */
-	protected GitHubClient createClient(String hostname) {
-		return new GitHubClient(hostname);
-	}
+	protected GitHubClient createClient(String hostname) throws MojoExecutionException{
+        // default to https, because of legacy
+        if (!hostname.contains("://"))
+            hostname = PROTOCOL_HTTPS + "://" + SUBDOMAIN_API + "." + hostname;
+        URL hostUrl;
+        try {
+            hostUrl = new URL(hostname);
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Could not parse host URL " + hostname);
+        }
+        return new GitHubClient(hostUrl.getHost(), hostUrl.getPort(), hostUrl.getProtocol());
+    }
 
 	/**
 	 * Create client

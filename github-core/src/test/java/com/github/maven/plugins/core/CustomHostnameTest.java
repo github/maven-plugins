@@ -21,18 +21,16 @@
  */
 package com.github.maven.plugins.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests using client with custom hostname
@@ -50,7 +48,7 @@ public class CustomHostnameTest {
 			return super.createClient();
 		}
 
-		protected GitHubClient createClient(String hostname) {
+		protected GitHubClient createClient(String hostname) throws MojoExecutionException {
 			host.set(hostname);
 			return super.createClient(hostname);
 		}
