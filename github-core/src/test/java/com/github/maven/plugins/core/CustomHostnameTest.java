@@ -50,7 +50,7 @@ public class CustomHostnameTest {
 			return super.createClient();
 		}
 
-		protected GitHubClient createClient(String hostname) {
+		protected GitHubClient createClient(String hostname) throws MojoExecutionException {
 			host.set(hostname);
 			return super.createClient(hostname);
 		}
