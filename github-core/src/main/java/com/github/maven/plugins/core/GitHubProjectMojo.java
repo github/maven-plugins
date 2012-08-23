@@ -177,7 +177,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 					hostUrl.getProtocol());
 		} catch (MalformedURLException e) {
 			throw new MojoExecutionException("Could not parse host URL "
-					+ hostname);
+					+ hostname, e);
 		}
 	}
 
