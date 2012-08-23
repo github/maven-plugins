@@ -22,6 +22,8 @@
 package com.github.maven.plugins.core;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -163,9 +165,20 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * 
 	 * @param hostname
 	 * @return non-null client
+	 * @throws MojoExecutionException
 	 */
-	protected GitHubClient createClient(String hostname) {
-		return new GitHubClient(hostname);
+	protected GitHubClient createClient(String hostname)
+			throws MojoExecutionException {
+		if (!hostname.contains("://"))
+			return new GitHubClient(hostname);
+		try {
+			URL hostUrl = new URL(hostname);
+			return new GitHubClient(hostUrl.getHost(), hostUrl.getPort(),
+					hostUrl.getProtocol());
+		} catch (MalformedURLException e) {
+			throw new MojoExecutionException("Could not parse host URL "
+					+ hostname);
+		}
 	}
 
 	/**
