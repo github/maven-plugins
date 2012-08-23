@@ -42,14 +42,14 @@ import org.sonatype.aether.repository.RemoteRepository;
 
 /**
  * Base GitHub Mojo class to be extended.
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Get formatted exception message for {@link IOException}
-	 * 
+	 *
 	 * @param e
 	 * @return message
 	 */
@@ -59,7 +59,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Is debug logging enabled?
-	 * 
+	 *
 	 * @return true if enabled, false otherwise
 	 */
 	protected boolean isDebug() {
@@ -69,7 +69,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Is info logging enabled?
-	 * 
+	 *
 	 * @return true if enabled, false otherwise
 	 */
 	protected boolean isInfo() {
@@ -79,7 +79,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Log given message at debug level
-	 * 
+	 *
 	 * @param message
 	 */
 	protected void debug(String message) {
@@ -90,7 +90,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Log given message and throwable at debug level
-	 * 
+	 *
 	 * @param message
 	 * @param throwable
 	 */
@@ -102,7 +102,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Log given message at info level
-	 * 
+	 *
 	 * @param message
 	 */
 	protected void info(String message) {
@@ -113,7 +113,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Log given message and throwable at info level
-	 * 
+	 *
 	 * @param message
 	 * @param throwable
 	 */
@@ -125,7 +125,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Create client
-	 * 
+	 *
 	 * @param host
 	 * @param userName
 	 * @param password
@@ -162,7 +162,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * Create client
 	 * <p>
 	 * Subclasses can override to do any custom client configuration
-	 * 
+	 *
 	 * @param hostname
 	 * @return non-null client
 	 * @throws MojoExecutionException
@@ -185,7 +185,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 	 * Create client
 	 * <p>
 	 * Subclasses can override to do any custom client configuration
-	 * 
+	 *
 	 * @return non-null client
 	 */
 	protected GitHubClient createClient() {
@@ -194,7 +194,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Configure credentials from configured username/password combination
-	 * 
+	 *
 	 * @param client
 	 * @param userName
 	 * @param password
@@ -213,7 +213,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Configure credentials from configured OAuth2 token
-	 * 
+	 *
 	 * @param client
 	 * @param oauth2Token
 	 * @return true if configured, false otherwise
@@ -231,7 +231,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Configure client with credentials from given server id
-	 * 
+	 *
 	 * @param client
 	 * @param serverId
 	 * @param settings
@@ -301,7 +301,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Get repository and throw a {@link MojoExecutionException} on failures
-	 * 
+	 *
 	 * @param project
 	 * @param owner
 	 * @param name
@@ -324,7 +324,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 	/**
 	 * Get server with given id
-	 * 
+	 *
 	 * @param settings
 	 * @param serverId
 	 *            must be non-null and non-empty

@@ -29,7 +29,7 @@ import org.junit.Test;
 
 /**
  * Unit tests of {@link StringUtils}
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class StringUtilsTest {

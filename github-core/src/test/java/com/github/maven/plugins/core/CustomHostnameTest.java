@@ -36,7 +36,7 @@ import org.junit.Test;
 
 /**
  * Tests using client with custom hostname
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class CustomHostnameTest {
@@ -72,7 +72,7 @@ public class CustomHostnameTest {
 
 	/**
 	 * Test custom hostname
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -86,7 +86,7 @@ public class CustomHostnameTest {
 
 	/**
 	 * Test null custom hostname
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -100,7 +100,7 @@ public class CustomHostnameTest {
 
 	/**
 	 * Test empty custom hostname
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

@@ -25,14 +25,14 @@ import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Path utilities
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class PathUtils {
 
 	/**
 	 * Get matching paths found in given base directory
-	 * 
+	 *
 	 * @param includes
 	 * @param excludes
 	 * @param baseDir

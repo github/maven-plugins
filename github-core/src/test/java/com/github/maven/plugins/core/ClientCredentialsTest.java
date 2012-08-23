@@ -38,7 +38,7 @@ import org.junit.Test;
 
 /**
  * Credential tests for the various configuration types
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class ClientCredentialsTest {
@@ -85,7 +85,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with direct user name and password
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -101,7 +101,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with no user name
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -112,7 +112,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with no password
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -123,7 +123,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with token
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -139,7 +139,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with token
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -155,7 +155,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with server with username & password
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -177,7 +177,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with server and no username & password
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -194,7 +194,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with server with OAuth 2 token
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -215,7 +215,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with missing server
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -226,7 +226,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with missing server
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -238,7 +238,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with missing server
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -251,7 +251,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with missing server
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -267,7 +267,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with no configuration
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)
@@ -278,7 +278,7 @@ public class ClientCredentialsTest {
 
 	/**
 	 * Test configured client with no configuration
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected = MojoExecutionException.class)

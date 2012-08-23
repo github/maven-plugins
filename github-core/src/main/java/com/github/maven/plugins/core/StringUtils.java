@@ -26,14 +26,14 @@ import java.util.List;
 
 /**
  * String utilities
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class StringUtils {
 
 	/**
 	 * Are any given values null or empty?
-	 * 
+	 *
 	 * @param values
 	 * @return true if any null or empty, false otherwise
 	 */
@@ -48,7 +48,7 @@ public class StringUtils {
 
 	/**
 	 * Create an array with only the non-null and non-empty values
-	 * 
+	 *
 	 * @param values
 	 * @return non-null but possibly empty array of non-null/non-empty strings
 	 */

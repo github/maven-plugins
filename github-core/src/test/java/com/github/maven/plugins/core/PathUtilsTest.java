@@ -33,14 +33,14 @@ import org.junit.Test;
 
 /**
  * Unit tests of {@link PathUtils}
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class PathUtilsTest {
 
 	/**
 	 * Create temporary directory to use in a test
-	 * 
+	 *
 	 * @return directory that exists
 	 */
 	public static final File createDirectory() {
@@ -55,7 +55,7 @@ public class PathUtilsTest {
 
 	/**
 	 * Test of {@link PathUtils#getMatchingPaths(String[], String[], String)}
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -71,7 +71,7 @@ public class PathUtilsTest {
 
 	/**
 	 * Test of {@link PathUtils#getMatchingPaths(String[], String[], String)}
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -90,7 +90,7 @@ public class PathUtilsTest {
 
 	/**
 	 * Test of {@link PathUtils#getMatchingPaths(String[], String[], String)}
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test

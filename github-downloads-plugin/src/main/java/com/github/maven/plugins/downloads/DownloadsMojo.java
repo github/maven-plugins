@@ -48,7 +48,7 @@ import org.eclipse.egit.github.core.service.DownloadService;
 
 /**
  * Mojo that uploads a built resource as a GitHub repository download
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  * @goal upload
  */
@@ -56,21 +56,21 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Owner of repository to upload to
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.repositoryOwner}"
 	 */
 	private String repositoryOwner;
 
 	/**
 	 * Name of repository to upload to
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.repositoryName}"
 	 */
 	private String repositoryName;
 
 	/**
 	 * User name for authentication
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.userName}"
 	 *            default-value="${github.global.userName}"
 	 */
@@ -78,7 +78,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * User name for authentication
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.password}"
 	 *            default-value="${github.global.password}"
 	 */
@@ -86,14 +86,14 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Description of download
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String description;
 
 	/**
 	 * User name for authentication
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.oauth2Token}"
 	 *            default-value="${github.global.oauth2Token}"
 	 */
@@ -101,14 +101,14 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Override existing downloads
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.override}"
 	 */
 	private boolean override;
 
 	/**
 	 * Include attached artifacts
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.includeAttached}"
 	 */
 	private boolean includeAttached;
@@ -118,14 +118,14 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	 * alter the current set of repository downloads. Showing what downloads
 	 * will be deleted does require still listing the current downloads
 	 * available from the repository.
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.dryRun}"
 	 */
 	private boolean dryRun;
 
 	/**
 	 * Host for API calls
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.host}"
 	 *            default-value="${github.global.host}"
 	 */
@@ -134,14 +134,14 @@ public class DownloadsMojo extends GitHubProjectMojo {
 	/**
 	 * Suffix to append to all uploaded files. The configured suffix will go
 	 * before the file extension.
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.suffix}"
 	 */
 	private String suffix;
 
 	/**
 	 * Id of server to use
-	 * 
+	 *
 	 * @parameter expression="${github.downloads.server}"
 	 *            default-value="${github.global.server}"
 	 */
@@ -149,21 +149,21 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Files to exclude
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] excludes;
 
 	/**
 	 * Files to include
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includes;
 
 	/**
 	 * Project being built
-	 * 
+	 *
 	 * @parameter expression="${project}
 	 * @required
 	 */
@@ -171,21 +171,21 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Session
-	 * 
+	 *
 	 * @parameter expression="${session}
 	 */
 	private MavenSession session;
 
 	/**
 	 * Settings
-	 * 
+	 *
 	 * @parameter expression="${settings}
 	 */
 	private Settings settings;
 
 	/**
 	 * Get files to create downloads from
-	 * 
+	 *
 	 * @return non-null but possibly empty list of files
 	 */
 	protected Collection<File> getFiles() {
@@ -228,7 +228,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Get file from artifact
-	 * 
+	 *
 	 * @param artifact
 	 * @return existent artifact file or null
 	 */
@@ -241,7 +241,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Get map of existing downloads with names mapped to download identifiers.
-	 * 
+	 *
 	 * @param service
 	 * @param repository
 	 * @return map of existing downloads
@@ -272,7 +272,7 @@ public class DownloadsMojo extends GitHubProjectMojo {
 
 	/**
 	 * Deleting existing download with given id and name
-	 * 
+	 *
 	 * @param repository
 	 * @param name
 	 * @param id

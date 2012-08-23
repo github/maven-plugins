@@ -30,14 +30,14 @@ import org.eclipse.egit.github.core.RepositoryId;
 
 /**
  * Repository utilities
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class RepositoryUtils {
 
 	/**
 	 * Extra repository id from given SCM URL
-	 * 
+	 *
 	 * @param url
 	 * @return repository id or null if extraction fails
 	 */
@@ -56,11 +56,11 @@ public class RepositoryUtils {
 
 	/**
 	 * Get repository
-	 * 
+	 *
 	 * @param project
 	 * @param owner
 	 * @param name
-	 * 
+	 *
 	 * @return repository id or null if none configured
 	 */
 	public static RepositoryId getRepository(final MavenProject project,

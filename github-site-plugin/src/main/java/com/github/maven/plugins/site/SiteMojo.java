@@ -60,7 +60,7 @@ import org.eclipse.egit.github.core.util.EncodingUtils;
  * Mojo which copies files to a GitHub repository branch. This directly uses the
  * GitHub data API to upload blobs, make commits, and update references and so a
  * local Git repository is not used.
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  * @goal site
  */
@@ -78,21 +78,21 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * Branch to update
-	 * 
+	 *
 	 * @parameter default-value="refs/heads/gh-pages"
 	 */
 	private String branch = BRANCH_DEFAULT;
 
 	/**
 	 * Path of tree
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String path;
 
 	/**
 	 * Commit message
-	 * 
+	 *
 	 * @parameter
 	 * @required
 	 */
@@ -100,21 +100,21 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * Name of repository
-	 * 
+	 *
 	 * @parameter expression="${github.site.repositoryName}"
 	 */
 	private String repositoryName;
 
 	/**
 	 * Owner of repository
-	 * 
+	 *
 	 * @parameter expression="${github.site.repositoryOwner}"
 	 */
 	private String repositoryOwner;
 
 	/**
 	 * User name for authentication
-	 * 
+	 *
 	 * @parameter expression="${github.site.userName}"
 	 *            default-value="${github.global.userName}"
 	 */
@@ -122,7 +122,7 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * User name for authentication
-	 * 
+	 *
 	 * @parameter expression="${github.site.password}"
 	 *            default-value="${github.global.password}"
 	 */
@@ -130,7 +130,7 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * User name for authentication
-	 * 
+	 *
 	 * @parameter expression="${github.site.oauth2Token}"
 	 *            default-value="${github.global.oauth2Token}"
 	 */
@@ -138,7 +138,7 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * Host for API calls
-	 * 
+	 *
 	 * @parameter expression="${github.site.host}"
 	 *            default-value="${github.global.host}"
 	 */
@@ -146,7 +146,7 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * Id of server to use
-	 * 
+	 *
 	 * @parameter expression="${github.site.server}"
 	 *            default-value="${github.global.server}"
 	 */
@@ -154,21 +154,21 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * Paths and patterns to include
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includes;
 
 	/**
 	 * Paths and patterns to exclude
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] excludes;
 
 	/**
 	 * Base directory to commit files from
-	 * 
+	 *
 	 * @parameter expression="${siteOutputDirectory}"
 	 *            default-value="${project.reporting.outputDirectory}"
 	 * @required
@@ -177,7 +177,7 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * Project being built
-	 * 
+	 *
 	 * @parameter expression="${project}
 	 * @required
 	 */
@@ -185,21 +185,21 @@ public class SiteMojo extends GitHubProjectMojo {
 
 	/**
 	 * Session
-	 * 
+	 *
 	 * @parameter expression="${session}
 	 */
 	private MavenSession session;
 
 	/**
 	 * Settings
-	 * 
+	 *
 	 * @parameter expression="${settings}
 	 */
 	private Settings settings;
 
 	/**
 	 * Force reference update
-	 * 
+	 *
 	 * @parameter expression="${github.site.force}"
 	 */
 	private boolean force;
@@ -207,7 +207,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	/**
 	 * True to always create a '.nojekyll' file at the root of the site if one
 	 * doesn't already exist.
-	 * 
+	 *
 	 * @parameter expression="${github.site.noJekyll}"
 	 */
 	private boolean noJekyll;
@@ -215,7 +215,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	/**
 	 * Merge with existing the existing tree that is referenced by the commit
 	 * that the ref currently points to
-	 * 
+	 *
 	 * @parameter expression="${github.site.merge}"
 	 */
 	private boolean merge;
@@ -224,14 +224,14 @@ public class SiteMojo extends GitHubProjectMojo {
 	 * Show what blob, trees, commits, and references would be created/updated
 	 * but don't actually perform any operations on the target GitHub
 	 * repository.
-	 * 
+	 *
 	 * @parameter expression="${github.site.dryRun}"
 	 */
 	private boolean dryRun;
 
 	/**
 	 * Create blob
-	 * 
+	 *
 	 * @param service
 	 * @param repository
 	 * @param path

@@ -30,7 +30,7 @@ import org.junit.Test;
 
 /**
  * Unit tests of {@link RepositoryUtils}
- * 
+ *
  * @author Kevin Sawicki (kevin@github.com)
  */
 public class RepositoryUtilsTest {
