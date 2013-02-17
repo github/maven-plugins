@@ -28,15 +28,12 @@ by the settings configuration property in parentheses.
 * password (github.global.password)
   * GitHub password used for API authentication
 * server (github.global.server)
-  * Id of the `server` element from the `settings.xml` to use credentials from:
-    * Configure standard authentication by setting the `username` and `password`
-    elements in the `servers` section of your `settings.xml` file along with an
-    `id`
-    * Configure an OAuth2 token by leaving the `username` element blank/missing
-    and just specify the OAuth2 token in the `password` element
-  * This option should be used **instead of** configuring the `userName` and
-    `password` or `oauth2Token` in the plugin `configuration` element or as a
-    `property` element in the `settings.xml` file
+  * Id of the `server` element from the `settings.xml`. To use standard authentication 
+    set  the `username` and `password` elements in the `servers` section of your 
+    `settings.xml` file along with an `id`. Configure an OAuth2 token by leaving the
+    `username` element blank/missing and just specify the token in the `password` element.
+  * This option should be used **instead of** configuring any of `userName`, `password` 
+    or `oauth2Token` in the plugin `configuration` element or as a properties.
 * repositoryName
   * Name of repository that downloads will be uploaded to
 * repositoryOwner
