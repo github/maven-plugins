@@ -39,9 +39,9 @@ by the settings configuration property in parentheses.
     in the `settings.xml` file
 
 * repositoryName
-  * Name of repository that downloads will be uploaded to
+  * Name of repository
 * repositoryOwner
-  * Owner of repository that downloads will be uploaded to
+  * Owner of repository
 
 *Note:* `repositoryOwner` property and `repositoryName` are optional and will be
 inferred from the following properties if not specified
@@ -71,81 +71,6 @@ inferred from the following properties if not specified
 <properties>
   <github.global.server>github</github.global.server>
 </properties>
-```
-
-## [Downloads Plugin](http://github.github.com/maven-plugins/downloads-plugin)
-Maven plugin that creates and uploads built resources to be available as 
-GitHub repository downloads.  The plugin has an `upload` goal and is configured
-with a goal prefix of `ghDownloads`. The plugin will upload the single build
-artifact by default but can be reconfigured to include/exclude files found in
-the build directory or to include attached artifacts such as Javadoc jars or
-sources jars.
-
-### Configuration
-
-* description
-  * Description visible on the repository download page
-* includes
-  * Sub-elements will be treated as patterns to include from the
-    `project.build.directory` as downloads
-  * This element is optional and will default to create a download of the
-    build's main artifact
-* excludes
-  * Sub-elements will be treated as patterns to exclude from the
-    `project.build.directory` as downloads
-  * This element is optional and will default to create a download of the
-    build's main artifact
-* includeAttached (github.downloads.includeAttached)
-  * true | false (default: false)
-  * Whether to create downloads from attached artifacts, by default only the
-    main artifact is uploaded
-* dryRun (github.downloads.dryRun)
-  * true | false (default: false)
-  * Log what files *would* be uploaded and what existing downloads *would* be
-    deleted without actually modifying the current downloads
-* override (github.downloads.override)
-  * true | false (default: false)
-  * Whether existing downloads with the same name will be deleted before
-    attempting to upload a new version
-  * *Note:* Attempts to upload a download with the same name as one that already
-    exists will fail unless this is set to true
-* suffix
-  * String to be appended after file name but before file extension for uploaded files
-  * A suffix of `-master` would cause artifacts to be uploaded as `myartifact-1.0-master.jar`
-
-### Example
-```xml
-<build>
-  <plugins>
-    <plugin>
-      <groupId>com.github.github</groupId>
-      <artifactId>downloads-maven-plugin</artifactId>
-      <version>0.5</version>
-      <configuration>
-        <description>${project.version} release of ${project.name}</description>
-        <override>true</override>
-        <includeAttached>true</includeAttached>
-      </configuration>
-    </plugin>
-  </plugins>
-</build>
-```
-
-To upload a built artifact run the following command:
-
-`$ mvn clean install ghDownloads:upload`
-
-You can also bind the upload goal to execute as part of a specific phase:
-
-```xml
-<executions>
-  <execution>
-    <goals>
-      <goal>upload</goal>
-    </goals>
-    <phase>install</phase>
-  </execution>
-</executions>
 ```
 
 ## [Site Plugin](http://github.github.com/maven-plugins/site-plugin)
