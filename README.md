@@ -1,4 +1,4 @@
-# GitHub Maven Plugins
+# GitHub Maven Plugins [![Build Status](https://travis-ci.org/github/maven-plugins.png)](https://travis-ci.org/github/maven-plugins)
 
 Collection of [Maven](http://maven.apache.org/) plugins that integrate with GitHub.
 These plugins are built on top of [API v3](http://developer.github.com/) through the
@@ -28,11 +28,11 @@ by the settings configuration property in parentheses.
 * password (github.global.password)
   * GitHub password used for API authentication
 * server (github.global.server)
-  * Id of the `server` element from the `settings.xml`. To use standard authentication 
-    set  the `username` and `password` elements in the `servers` section of your 
+  * Id of the `server` element from the `settings.xml`. To use standard authentication
+    set  the `username` and `password` elements in the `servers` section of your
     `settings.xml` file along with an `id`. Configure an OAuth2 token by leaving the
     `username` element blank/missing and just specify the token in the `password` element.
-  * This option should be used **instead of** configuring any of `userName`, `password` 
+  * This option should be used **instead of** configuring any of `userName`, `password`
     or `oauth2Token` in the plugin `configuration` element or as a properties.
 * repositoryName
   * Name of repository
