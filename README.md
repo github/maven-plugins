@@ -9,7 +9,7 @@ Released builds are available from [Maven Central](http://search.maven.org/#sear
 ## Core Configuration
 
 The plugins support several configuration options that can either be expressed
-in your project's POM file or in your settings.xml file. Where you put the
+in your project's POM file or in your `settings.xml` file. Where you put the
 plugin settings depends on whether you want a specific setting to be configured
 globally or on a per-project basis.
 
@@ -18,25 +18,25 @@ All GitHub Maven plugins support the following core configuration elements.
 The notation below shows the plugin configuration property name followed
 by the settings configuration property in parentheses.
 
-* host (github.global.host)
+* `host` (`github.global.host`)
   * Domain of GitHub API calls (defaults to `api.github.com`)
-* oauth2Token (github.global.oauth2Token)
+* `oauth2Token` (`github.global.oauth2Token`)
   * OAuth2 access token for API authentication
   * [More about GitHub OAuth support](http://developer.github.com/v3/oauth/)
-* userName (github.global.userName)
+* `userName` (`github.global.userName`)
   * GitHub user name used for API authentication
-* password (github.global.password)
+* `password` (`github.global.password`)
   * GitHub password used for API authentication
-* server (github.global.server)
+* `server` (`github.global.server`)
   * Id of the `server` element from the `settings.xml`. To use standard authentication
     set  the `username` and `password` elements in the `servers` section of your
     `settings.xml` file along with an `id`. Configure an OAuth2 token by leaving the
     `username` element blank/missing and just specify the token in the `password` element.
   * This option should be used **instead of** configuring any of `userName`, `password`
     or `oauth2Token` in the plugin `configuration` element or as a properties.
-* repositoryName
+* `repositoryName`
   * Name of repository
-* repositoryOwner
+* `repositoryOwner`
   * Owner of repository
 
 *Note:* `repositoryOwner` property and `repositoryName` are optional and will be
@@ -87,36 +87,36 @@ prefix of `ghSite`.
 
 ### Configuration
 
-* branch
+* `branch`
   * Branch ref that will be updated to commit made
   * Default: `refs/heads/gh-pages`
-* message
+* `message`
   * Message used for commit
-* outputDirectory
+* `outputDirectory`
   * Directory that includes and excludes will be relative to
   * Defaults to `siteOutputDirectory` or `project.reporting.outputDirectory`
-* includes
+* `includes`
   * Sub-elements will be treated as patterns to include from the
     `outputDirectory`
-* excludes
+* `excludes`
   * Sub-elements will be treated as patterns to exclude from the
     `outputDirectory`
-* path
+* `path`
   * Path relative to the root of the repository that all blobs should be
     relative to
-* force (github.site.force)
-  * true | false (default: false)
+* `force` (`github.site.force`)
+  * `true` | `false` (default: `false`)
   * Whether to force a ref update, default is fast-forwards only
-* merge (github.site.merge)
-  * true | false (default: false)
+* `merge` (`github.site.merge`)
+  * `true` | `false` (default: `false`)
   * Whether to merge with the current tree or completely replace the tree that
     the commit points to
-* dryRun (github.site.dryRun)
-  * true | false (default: false)
+* `dryRun` (`github.site.dryRun`)
+  * `true` | `false` (default: `false`)
   * Log what blobs, tree, and commits *would* be created without actually
     creating them
-* noJekyll (github.site.noJekyll)
-  * true | false (default: false)
+* `noJekyll` (`github.site.noJekyll`)
+  * `true` | `false` (default: `false`)
   * Whether to always create a `.nojekyll` file at the root of the site if one
     doesn't already exist.  This setting should be enabled if your site contains
     any folders that begin with an underscore.
