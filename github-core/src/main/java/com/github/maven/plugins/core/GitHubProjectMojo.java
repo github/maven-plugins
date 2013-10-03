@@ -21,12 +21,6 @@
  */
 package com.github.maven.plugins.core;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.List;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,9 +30,12 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.repository.Authentication;
-import org.sonatype.aether.repository.RemoteRepository;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * Base GitHub Mojo class to be extended.
@@ -248,21 +245,24 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 		String serverUsername = null;
 		String serverPassword = null;
 
-		if (session != null) {
-			RepositorySystemSession systemSession = session
-					.getRepositorySession();
-			if (systemSession != null) {
-				Authentication authInfo = systemSession
-						.getAuthenticationSelector().getAuthentication(
-								new RemoteRepository().setId(serverId));
-				if (authInfo != null) {
-					serverUsername = authInfo.getUsername();
-					serverPassword = authInfo.getPassword();
-				}
-			}
-		}
+        // Maven 3.1.0 - It's now impossible to retrieve the username and password from the remote repository.
 
-		if (StringUtils.isEmpty(serverPassword)) {
+//		if (session != null) {
+//			RepositorySystemSession systemSession = session
+//					.getRepositorySession();
+//			if (systemSession != null) {
+//                RemoteRepository.Builder builder = new RemoteRepository.Builder(serverId, "", "");
+//                Authentication authInfo = systemSession.getAuthenticationSelector().getAuthentication
+//                        (builder.build());
+//				if (authInfo != null) {
+//					serverUsername = authInfo.getUsername();
+//					serverPassword = authInfo.getPassword();
+//				}
+//			}
+//		}
+
+        // Always true.
+//		if (StringUtils.isEmpty(serverPassword)) {
 			Server server = getServer(settings, serverId);
 			if (server == null)
 				throw new MojoExecutionException(MessageFormat.format(
@@ -274,7 +274,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 
 			serverUsername = server.getUsername();
 			serverPassword = server.getPassword();
-		}
+//		}
 
 		if (!StringUtils.isEmpty(serverUsername, serverPassword)) {
 			if (isDebug())
