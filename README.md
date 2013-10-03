@@ -128,7 +128,7 @@ prefix of `ghSite`.
     <plugin>
       <groupId>com.github.github</groupId>
       <artifactId>site-maven-plugin</artifactId>
-      <version>0.6</version>
+      <version>0.8</version>
       <configuration>
         <message>Creating site for ${project.version}</message>
       </configuration>
