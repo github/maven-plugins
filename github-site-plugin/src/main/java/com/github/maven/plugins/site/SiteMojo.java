@@ -229,6 +229,14 @@ public class SiteMojo extends GitHubProjectMojo {
 	 */
 	private boolean dryRun;
 
+    /**
+     * Skip the site upload.
+     *
+     * @parameter expression="${github.site.skip}"
+     *            default-value="false"
+     */
+    private boolean skip;
+
 	/**
 	 * Create blob
 	 *
@@ -282,6 +290,11 @@ public class SiteMojo extends GitHubProjectMojo {
 	}
 
 	public void execute() throws MojoExecutionException {
+        if (skip) {
+            info("Github Site Plugin execution skipped");
+            return;
+        }
+
 		RepositoryId repository = getRepository(project, repositoryOwner,
 				repositoryName);
 
