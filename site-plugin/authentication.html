@@ -71,10 +71,12 @@
                 <ul class="nav nav-list">
                     <li class="nav-header">Github Site Plugin</li>
                                 
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>About</a>
-          </li>
+                          <a href="index.html" title="About">
+          <i class="none"></i>
+        About</a>
+            </li>
                   
       <li>
     
@@ -91,12 +93,10 @@
             </li>
                               <li class="nav-header">Advanced configuration</li>
                                 
-      <li>
+      <li class="active">
     
-                          <a href="authentication.html" title="Authentication">
-          <i class="none"></i>
-        Authentication</a>
-            </li>
+            <a href="#"><i class="none"></i>Authentication</a>
+          </li>
                   
       <li>
     
@@ -119,104 +119,13 @@
         Maven Phase</a>
             </li>
                               <li class="nav-header">Project Documentation</li>
-                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                          
       <li>
     
                           <a href="project-info.html" title="Project Information">
-          <i class="icon-chevron-down"></i>
+          <i class="icon-chevron-right"></i>
         Project Information</a>
-                    <ul class="nav nav-list">
-                      
-      <li class="active">
-    
-            <a href="#"><i class="none"></i>About</a>
-          </li>
-                      
-      <li>
-    
-                          <a href="team-list.html" title="Project Team">
-          <i class="none"></i>
-        Project Team</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="dependency-info.html" title="Dependency Information">
-          <i class="none"></i>
-        Dependency Information</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="plugins.html" title="Project Plugins">
-          <i class="none"></i>
-        Project Plugins</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="integration.html" title="Continuous Integration">
-          <i class="none"></i>
-        Continuous Integration</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="issue-tracking.html" title="Issue Tracking">
-          <i class="none"></i>
-        Issue Tracking</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="source-repository.html" title="Source Repository">
-          <i class="none"></i>
-        Source Repository</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="license.html" title="Project License">
-          <i class="none"></i>
-        Project License</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="plugin-management.html" title="Plugin Management">
-          <i class="none"></i>
-        Plugin Management</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="distribution-management.html" title="Distribution Management">
-          <i class="none"></i>
-        Distribution Management</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="project-summary.html" title="Project Summary">
-          <i class="none"></i>
-        Project Summary</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="mail-lists.html" title="Mailing Lists">
-          <i class="none"></i>
-        Mailing Lists</a>
-            </li>
-                      
-      <li>
-    
-                          <a href="dependencies.html" title="Dependencies">
-          <i class="none"></i>
-        Dependencies</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                                   
       <li>
     
@@ -244,14 +153,59 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h1>Github-Site-Plugin</h1><p>The <em>github site plugin</em> let you upload Maven Site to Github Pages. By pushing the site generated by Maven to your
-Git repository, it allows you to always have an up to date configuration benefiting from the git traceability.</p><p>The plugin commits files generated and updates a specific branch reference in a GitHub repository. This plugin can
-be used to deploy a Maven site to a <code>gh-pages</code> branch so that it can be served statically as a GitHub Project Page.</p><p>The plugin has a <a href="site-mojo.html">site</a> goal and is configured with a goal prefix of `ghSite. To use the plugin,
-read the <a href="quickstart.html">quickstart</a> guide.</p><p>The plugin is built on top of <a href="http://developer.github.com/">API v3</a> through the
-<a href="https://github.com/eclipse/egit-github/tree/master/org.eclipse.egit.github.core">GitHub Java library</a>.</p><p>Released builds are available from <a href="http://search.maven.org/#search%7Cga%7C1%7Ccom.github.github">Maven Central</a>.</p><h2>Maven Site</h2><p>Maven Site let you manage project documentation close to the code. It can also generate reports about your project
-such as dependencies, test results, license and so on. To generate your site check the <a href="http://maven.apache.org/plugins/maven-site-plugin/">maven-site-plugin</a> and the
-<a href="http://books.sonatype.com/mvnref-book/reference/site-generation.html">site generation</a> chapter from the Maven Reference Guide.</p><h2>Github Page</h2><p>Github page is a very simple, but powerful, way to publish simple web site using Git. It&rsquo;s free and available to all
-Github repositories. Check the <a href="http://pages.github.com/">Github page site</a> for more information.</p>
+            <h1>Configuring the GitHub credentials</h1><p>To successfully push the site to GitHub, the plugin needs your GitHub credentials, or at least credentials that can
+push to the repository.</p><p>There are several ways to configure the access:</p>
+<ul>
+  <li>from the Maven <code>settings.xml</code> file using a pair username - password</li><li>from the plugin configuration (not recommended)</li>
+</ul><h2>Using username/password or oauth</h2><p>The easiest way to give access to your repository is to add a <code>server</code> in your <em>settings.xml</em> with your username and
+password (or from any account that can push to the repository).</p><p>In your <code>~/.m2/settings.xml</code> file, add a <code>server</code> entry as follows:</p>
+<pre><code>&lt;server&gt;
+   &lt;id&gt;github&lt;/id&gt;
+    &lt;username&gt;YOUR_USERNAME&lt;/username&gt;
+    &lt;password&gt;YOUR_PASSWORD&lt;/password&gt;
+&lt;/server&gt;
+</code></pre><p>Using oauth is quite similar. Once you have done all the preliminaries (see [GitHub OAuth support](<a href="http://developer">http://developer</a>
+.github.com/v3/oauth/)), add a <code>server</code> entry as follows:</p>
+<pre><code>&lt;server&gt;
+    &lt;id&gt;github&lt;/id&gt;
+    &lt;password&gt;OAUTH2TOKEN&lt;/password&gt;
+&lt;/server&gt;
+</code></pre><p>The server&rsquo;s id (<em>github</em>) is used in the plugin configuration:</p>
+<pre><code>&lt;plugin&gt;
+    &lt;!-- Deploy the web site --&gt;
+    &lt;groupId&gt;com.github.github&lt;/groupId&gt;
+    &lt;artifactId&gt;site-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;0.9-SNAPSHOT&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;site&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;phase&gt;site-deploy&lt;/phase&gt;
+            &lt;configuration&gt;
+                &lt;!-- must match the server&#39;s id  --&gt;
+                &lt;server&gt;github&lt;/server&gt;
+
+                &lt;!-- The commit message --&gt;
+                &lt;message&gt;Building site for my project&lt;/message&gt;
+                &lt;!-- The location where the site is uploaded --&gt;
+                &lt;path&gt;${site.path}&lt;/path&gt;
+                &lt;!-- Use merge or override the content --&gt;
+                &lt;merge&gt;true&lt;/merge&gt;
+            &lt;/configuration&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;
+</code></pre><p>There is another way to configure the server id, avoiding you to write in in the plugin configuration. Set the
+<code>github.global.server</code> property:</p>
+<pre><code>&lt;properties&gt;
+  &lt;github.global.server&gt;github&lt;/github.global.server&gt;
+&lt;/properties&gt;
+</code></pre><p>This snippet can be either in your pom file or in a profile from your <code>settings.xml</code>.</p><h2>Setting the username and password inside the plugin configuration</h2><p>This way is <strong>not recommended</strong>. You can configure the authentication from the plugin configuration with the
+following parameters:</p>
+<ul>
+  <li><code>userName</code> (requires the password)</li><li><code>password</code> (requires the username)</li><li><code>oauth2Token</code> (is sufficient)</li>
+</ul>
                   </div>
             </div>
           </div>
