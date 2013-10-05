@@ -25,7 +25,7 @@
 
     <issueManagement>
         <url>https://github.com/github/maven-plugins/issues</url>
-        <system>GitHub Issues</system>
+        <system>GitHub</system>
     </issueManagement>
 
     <licenses>
