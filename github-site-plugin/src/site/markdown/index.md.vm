@@ -10,7 +10,10 @@ be used to deploy a Maven site to a `gh-pages` branch so that it can be served s
 The plugin has a [site](site-mojo.html) goal and is configured with a goal prefix of `ghSite. To use the plugin,
 read the [quickstart](quickstart.html) guide.
 
-The plugin releases are available from Maven Central, so you don't have to add any repository to start using it.
+The plugin is built on top of [API v3](http://developer.github.com/) through the
+[GitHub Java library](https://github.com/eclipse/egit-github/tree/master/org.eclipse.egit.github.core).
+
+Released builds are available from [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ccom.github.github).
 
 Maven Site
 ----------

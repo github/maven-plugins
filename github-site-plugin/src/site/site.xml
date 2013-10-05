@@ -18,7 +18,7 @@
             <sideBarEnabled>true</sideBarEnabled>
 
             <gitHub>
-                <projectId>99soft/backport-spi</projectId>
+                <projectId>github/maven-plugins</projectId>
                 <ribbonOrientation>right</ribbonOrientation>
                 <ribbonColor>black</ribbonColor>
             </gitHub>

@@ -1,0 +1,82 @@
+Configuring the GitHub credentials
+==================================
+
+To successfully push the site to GitHub, the plugin needs your GitHub credentials, or at least credentials that can
+push to the repository.
+
+There are several ways to configure the access:
+
+* from the Maven `settings.xml` file using a pair username - password
+* from the plugin configuration (not recommended)
+
+Using username/password or oauth
+---------------------------------
+
+The easiest way to give access to your repository is to add a `server` in your _settings.xml_ with your username and
+password (or from any account that can push to the repository).
+
+In your `~/.m2/settings.xml` file, add a `server` entry as follows:
+
+    <server>
+	   <id>github</id>
+    	<username>YOUR_USERNAME</username>
+    	<password>YOUR_PASSWORD</password>
+  	</server>
+
+Using oauth is quite similar. Once you have done all the preliminaries (see [GitHub OAuth support](http://developer
+.github.com/v3/oauth/)), add a `server` entry as follows:
+
+    <server>
+        <id>github</id>
+        <password>OAUTH2TOKEN</password>
+    </server>
+
+The server's id (_github_) is used in the plugin configuration:
+
+    <plugin>
+        <!-- Deploy the web site -->
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>site</goal>
+                </goals>
+                <phase>site-deploy</phase>
+                <configuration>
+                    <!-- must match the server's id  -->
+                    <server>github</server>
+
+                    <!-- The commit message -->
+                    <message>Building site for my project</message>
+                    <!-- The location where the site is uploaded -->
+                    <path>${site.path}</path>
+                    <!-- Use merge or override the content -->
+                    <merge>true</merge>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+
+There is another way to configure the server id, avoiding you to write in in the plugin configuration. Set the
+`github.global.server` property:
+
+    <properties>
+      <github.global.server>github</github.global.server>
+    </properties>
+
+This snippet can be either in your pom file or in a profile from your `settings.xml`.
+
+Setting the username and password inside the plugin configuration
+-----------------------------------------------------------------
+
+This way is **not recommended**. You can configure the authentication from the plugin configuration with the
+following parameters:
+
+* `userName` (requires the password)
+* `password` (requires the username)
+* `oauth2Token` (is sufficient)
+
+
+
