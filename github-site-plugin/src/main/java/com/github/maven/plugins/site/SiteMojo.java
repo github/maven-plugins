@@ -91,7 +91,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String path;
 
 	/**
-	 * Commit message
+	 * The commit message used when committing the site.
 	 *
 	 * @parameter
 	 * @required
@@ -99,21 +99,21 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String message;
 
 	/**
-	 * Name of repository
+	 * The name of the repository. This setting must be set if the project's url and scm metadata are not set.
 	 *
 	 * @parameter expression="${github.site.repositoryName}"
 	 */
 	private String repositoryName;
 
 	/**
-	 * Owner of repository
+	 * The owner of repository. This setting must be set if the project's url and scm metadata are not set.
 	 *
 	 * @parameter expression="${github.site.repositoryOwner}"
 	 */
 	private String repositoryOwner;
 
 	/**
-	 * User name for authentication
+	 * The user name for authentication
 	 *
 	 * @parameter expression="${github.site.userName}"
 	 *            default-value="${github.global.userName}"
@@ -121,7 +121,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String userName;
 
 	/**
-	 * User name for authentication
+	 * The password for authentication
 	 *
 	 * @parameter expression="${github.site.password}"
 	 *            default-value="${github.global.password}"
@@ -129,7 +129,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String password;
 
 	/**
-	 * User name for authentication
+	 * The oauth2 token for authentication
 	 *
 	 * @parameter expression="${github.site.oauth2Token}"
 	 *            default-value="${github.global.oauth2Token}"
@@ -137,7 +137,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String oauth2Token;
 
 	/**
-	 * Host for API calls
+	 * The Host for API calls.
 	 *
 	 * @parameter expression="${github.site.host}"
 	 *            default-value="${github.global.host}"
@@ -145,7 +145,8 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String host;
 
 	/**
-	 * Id of server to use
+	 * The <em>id</em> of the server to use to retrieve the Github credentials. This id must identify a
+     * <em>server</em> from your <em>setting.xml</em> file.
 	 *
 	 * @parameter expression="${github.site.server}"
 	 *            default-value="${github.global.server}"
@@ -167,7 +168,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private String[] excludes;
 
 	/**
-	 * Base directory to commit files from
+	 * The base directory to commit files from. <em>target/site</em> by default.
 	 *
 	 * @parameter expression="${siteOutputDirectory}"
 	 *            default-value="${project.reporting.outputDirectory}"
@@ -176,7 +177,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private File outputDirectory;
 
 	/**
-	 * Project being built
+	 * The project being built
 	 *
 	 * @parameter expression="${project}
 	 * @required
@@ -184,14 +185,14 @@ public class SiteMojo extends GitHubProjectMojo {
 	private MavenProject project;
 
 	/**
-	 * Session
+	 * The Maven session
 	 *
 	 * @parameter expression="${session}
 	 */
 	private MavenSession session;
 
 	/**
-	 * Settings
+	 * The Maven settings
 	 *
 	 * @parameter expression="${settings}
 	 */
@@ -205,7 +206,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private boolean force;
 
 	/**
-	 * True to always create a '.nojekyll' file at the root of the site if one
+	 * Set it to {@code true} to always create a '.nojekyll' file at the root of the site if one
 	 * doesn't already exist.
 	 *
 	 * @parameter expression="${github.site.noJekyll}"
@@ -213,7 +214,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private boolean noJekyll;
 
 	/**
-	 * Merge with existing the existing tree that is referenced by the commit
+	 * Set it to {@code true} to merge with existing the existing tree that is referenced by the commit
 	 * that the ref currently points to
 	 *
 	 * @parameter expression="${github.site.merge}"

@@ -1,0 +1,75 @@
+Configuring the project, repository and branch
+==============================================
+
+To publish the site, the plugin must be able to deduced the Github project on which the site is uploaded. There are
+several ways to instructs the plugin with this information:
+
+* using the project's url
+* from the project's SCM settings
+* from the plugin configuration
+
+Using the project's url
+-----------------------
+
+This is probably the simplest way. In your `pom.xml` file, set the project's `<url>` to the Github project page:
+
+    <url>https://github.com/nanoko-project/coffee-mill-maven-plugin</url>
+
+Of course, this settings can be inherited.
+
+Using the project's SCM
+-----------------------
+
+The project's SCM indicates the source repository hosting your project. The plugin tries to deduce the
+repository from the `url`, `connection` and `developerConnection`  (in this order).
+
+    <scm>
+        <url>https://github.com/nanoko-project/coffee-mill-maven-plugin</url>
+        <connection>scm:git:git@github.com:nanoko-project/coffee-mill-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:nanoko-project/coffee-mill-maven-plugin.git</developerConnection>
+    </scm>
+
+As for the project's url, these settings can be inherited.
+
+Using plugin configuration
+--------------------------
+
+The project's repository is identified by repository's owner and name. You can configure these settings directly in
+the plugin configuration:
+
+    <plugin>
+        <!-- Deploy the web site -->
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>site</goal>
+                </goals>
+                <!-- select the Maven phase in which the plugin will be executed -->
+                <phase>site-deploy</phase>
+                <configuration>
+                    <!-- repository identification -->
+                    <repositoryName>coffee-mill-maven-plugin<repositoryName>
+                    <repositoryOwner>nanoko-project</repositoryOwner>
+
+                    <server>github</server>
+
+                    <!-- The commit message -->
+                    <message>Building site for my project</message>
+                    <!-- The location where the site is uploaded -->
+                    <path>${site.path}</path>
+                    <!-- Use merge or override the content -->
+                    <merge>true</merge>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+
+Configuring the branch
+----------------------
+
+You can change the branch on which the site is pushed. By default, it uses _gh-pages_,
+the branch use by Github to generate the Github Page. Configure the _branch_ parameter of the plugin to change the
+branch to update.

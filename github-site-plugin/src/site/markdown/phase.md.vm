@@ -1,0 +1,72 @@
+Choosing the right Maven Phase
+==============================
+
+
+The plugin is not bound to a Maven phase by default, so you have to choose one. Generally we use either `site` or
+`site-deploy`. The `site` phase is used by Maven to compute the project reports,
+and generate the site. The `site-deploy` phase happens after the `site` phase and is responsible for the upload of the
+ site. Even if the `site-deploy` phase makes more sense, it requires some extra-configuration.
+
+
+Using the site phase
+--------------------
+
+To use the site phase, just configure the plugin as follows:
+
+    <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+            <!-- the configuration goes here -->
+        </configuration>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>site</goal>
+                </goals>
+                <!-- use the site phase -->
+                <phase>site</phase>
+            </execution>
+        </executions>
+    </plugin>
+
+However be aware that any site generation, even to check the current state, triggers the site upload.
+
+Using the site-deploy phase
+---------------------------
+
+Instead of the `site` phase, you can use the `site-deploy` phase:
+
+    <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+            <!-- the configuration goes here -->
+        </configuration>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>site</goal>
+                </goals>
+                <phase>site-deploy</phase>
+            </execution>
+        </executions>
+    </plugin>
+
+However, the regular `maven-site-plugin` is also bound to the `site-deploy` phase,
+and triggers the regular site upload. If you are using the Github Site Plugin you probably don't want to use the
+traditional upload feature, and so you must disable it:
+
+    <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-site-plugin</artifactId>
+	    <version>3.3</version>
+	    <configuration>
+		    <skipDeploy>true</skipDeploy>
+	    </configuration>
+    </plugin>
+
+With this configuration, you site is uploaded to Github in the `site-deploy` phase as expected and without
+conflicting with the regular `maven-site-plugin` behavior.

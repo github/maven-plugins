@@ -21,12 +21,17 @@
  */
 package com.github.maven.plugins.core;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
+import org.apache.maven.model.Scm;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Unit tests of {@link RepositoryUtils}
@@ -78,4 +83,37 @@ public class RepositoryUtilsTest {
 		assertEquals("project", repo.getName());
 		assertEquals("owner/project", repo.generateId());
 	}
+
+    @Test
+    public void extractRepositoryFromEmptyProject() {
+        MavenProject project = Mockito.mock(MavenProject.class);
+        RepositoryId repositoryId = RepositoryUtils.getRepository(project, null, null);
+        assertThat(repositoryId).isNull();
+    }
+
+    @Test
+    public void extractRepositoryFromEmptyProjectWithUrl() {
+        MavenProject project = Mockito.mock(MavenProject.class);
+        when(project.getUrl()).thenReturn("https://github.com/nanoko-project/coffee-mill-maven-plugin");
+        RepositoryId repositoryId = RepositoryUtils.getRepository(project, null, null);
+        assertThat(repositoryId).isNotNull();
+        assertThat(repositoryId.getName()).isEqualTo("coffee-mill-maven-plugin");
+        assertThat(repositoryId.getOwner()).isEqualTo("nanoko-project");
+    }
+
+    @Test
+    public void extractRepositoryFromEmptyProjectWithSCM() {
+        Scm scm = Mockito.mock(Scm.class);
+        when(scm.getUrl()).thenReturn("https://github.com/nanoko-project/coffee-mill-maven-plugin");
+        MavenProject project = Mockito.mock(MavenProject.class);
+        when(project.getUrl()).thenReturn("must not be used");
+        when(project.getScm()).thenReturn(scm);
+        RepositoryId repositoryId = RepositoryUtils.getRepository(project, null, null);
+        assertThat(repositoryId).isNotNull();
+        assertThat(repositoryId.getName()).isEqualTo("coffee-mill-maven-plugin");
+        assertThat(repositoryId.getOwner()).isEqualTo("nanoko-project");
+    }
+
+
+
 }

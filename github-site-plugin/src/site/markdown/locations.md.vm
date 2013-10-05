@@ -1,0 +1,107 @@
+Configure the site location
+===========================
+
+Root location
+-------------
+
+Let's say that your Github project is:
+
+    https://github.com/owner/project
+
+Your associated Github page is:
+
+    http://owner.github.io/project
+
+
+Configuring the destination directory
+-------------------------------------
+
+The plugin can be configured to upload the site to a specific directory, using the `path` parameter:
+
+    	<plugin>
+    		<groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+    		<configuration>
+    			<message>Generated site for ${project.artifactId} ${project.version}</message>
+
+                <!-- Destination directory -->
+    			<path>site-plugin</path>
+
+    			<merge>true</merge>
+    		</configuration>
+    		<executions>
+    			<execution>
+    				<goals>
+    					<goal>site</goal>
+    				</goals>
+    				<phase>site-deploy</phase>
+    			</execution>
+    		</executions>
+    	</plugin>
+
+As a consequence, your site is published on:
+
+    http://owner.github.io/project/site-plugin
+
+By setting the `path` to `\${project.version}`, you can keep the older versions of the site available.
+
+
+Using profiles to configure the destination directory
+-----------------------------------------------------
+
+By using Maven profile, you can change the site destination. For example, the snapshot version are deployed in
+`snapshot`, while the released version are deployed to `\${project.version}`.
+
+Configure the `path` parameter too `site.path`:
+
+    <plugin>
+    		<groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+    		<configuration>
+    			<message>Generated site for ${project.artifactId} ${project.version}</message>
+
+                <!-- Destination directory -->
+    			<path>\${site.path}</path>
+
+    			<merge>true</merge>
+    		</configuration>
+    		<executions>
+    			<execution>
+    				<goals>
+    					<goal>site</goal>
+    				</goals>
+    				<phase>site-deploy</phase>
+    			</execution>
+    		</executions>
+    	</plugin>
+
+Define the properties in your pom, with the default (snapshot) value:
+
+    <properties>
+        <site.path>snapshot</site.path>
+    </properties>
+
+
+Configure the release profile as follows:
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <site.path>release</site.path>
+            </properties>
+        </profile>
+    </profiles>
+
+Don't forget to configure the `maven-release-plugin` to enable the release profile when performing your release:
+
+    <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+            <useReleaseProfile>true</useReleaseProfile>
+            <goals>deploy site site-deploy</goals>
+        </configuration>
+    </plugin>
