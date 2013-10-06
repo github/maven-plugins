@@ -235,6 +235,7 @@ public class SiteMojo extends GitHubProjectMojo {
      *
      * @parameter expression="${github.site.skip}"
      *            default-value="false"
+     * @since 0.9
      */
     private boolean skip;
 
