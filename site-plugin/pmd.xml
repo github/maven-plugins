@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.2.5" timestamp="2013-10-06T07:45:59.384">
+<pmd version="4.2.5" timestamp="2013-10-13T17:04:32.189">
 <file name="/Users/clement/Projects/github-maven-plugins/github-site-plugin/src/main/java/com/github/maven/plugins/site/SiteMojo.java">
 <violation beginline="22" endline="474" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="com.github.maven.plugins.site" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
