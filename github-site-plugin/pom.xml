@@ -14,7 +14,7 @@
     <description>Maven plugin that commits files to a branch in a GitHub repository</description>
 
     <properties>
-        <last.released.version>0.8</last.released.version>
+        <last.released.version>0.9</last.released.version>
     </properties>
 
     <build>
