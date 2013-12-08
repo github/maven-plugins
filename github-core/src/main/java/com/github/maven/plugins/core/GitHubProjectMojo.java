@@ -30,6 +30,16 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -42,7 +52,7 @@ import java.util.List;
  *
  * @author Kevin Sawicki (kevin@github.com)
  */
-public abstract class GitHubProjectMojo extends AbstractMojo {
+public abstract class GitHubProjectMojo extends AbstractMojo implements Contextualizable {
 
 	/**
 	 * Get formatted exception message for {@link IOException}
@@ -272,6 +282,20 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 				debug(MessageFormat.format("Using ''{0}'' server credentials",
 						serverId));
 
+			{
+				try
+				{
+					SettingsDecrypter settingsDecrypter = container.lookup( SettingsDecrypter.class );
+					SettingsDecryptionResult result =
+						settingsDecrypter.decrypt( new DefaultSettingsDecryptionRequest( server ) );
+					server = result.getServer();
+				}
+				catch ( ComponentLookupException cle )
+				{
+					throw new MojoExecutionException( "Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle );
+				}
+			}
+				
 			serverUsername = server.getUsername();
 			serverPassword = server.getPassword();
 //		}
@@ -342,4 +366,17 @@ public abstract class GitHubProjectMojo extends AbstractMojo {
 				return server;
 		return null;
 	}
+
+	@Requirement
+    private PlexusContainer container;
+	
+    /**
+     * {@inheritDoc}
+     */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+	
 }
