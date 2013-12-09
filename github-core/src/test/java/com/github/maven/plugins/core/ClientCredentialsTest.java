@@ -33,6 +33,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.junit.Test;
 
@@ -52,8 +57,23 @@ public class ClientCredentialsTest {
 		private final AtomicReference<String> token = new AtomicReference<String>();
 
 		protected GitHubClient createClient() {
-			return new GitHubClient() {
+			try
+			{
+				DefaultPlexusContainer container = new DefaultPlexusContainer();
+				Context context = container.getContext();
+				context.put( PlexusConstants.PLEXUS_KEY, container );
+				super.contextualize(context );
+			}
+			catch ( PlexusContainerException pce )
+			{
+				pce.printStackTrace( System.err );
+			}
+			catch ( ContextException ce )
+			{
+				ce.printStackTrace( System.err );
+			}
 
+			return new GitHubClient() {
 				public GitHubClient setCredentials(String user, String password) {
 					TestMojo.this.user.set(user);
 					TestMojo.this.password.set(password);
