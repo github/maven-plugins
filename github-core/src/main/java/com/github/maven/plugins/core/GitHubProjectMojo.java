@@ -21,11 +21,13 @@
  */
 package com.github.maven.plugins.core;
 
+import com.github.maven.plugins.core.egit.GitHubClientEgit;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.RepositoryId;
@@ -42,6 +44,7 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -155,6 +158,40 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 		} else
 			client = createClient();
 
+		{
+			Proxy proxy = getProxy( settings, serverId );
+			if ( null != proxy )
+			{
+				try
+				{
+					SettingsDecrypter settingsDecrypter = container.lookup( SettingsDecrypter.class );
+					SettingsDecryptionResult result =
+						settingsDecrypter.decrypt( new DefaultSettingsDecryptionRequest( proxy ) );
+					proxy = result.getProxy();
+				}
+				catch ( ComponentLookupException cle )
+				{
+					throw new MojoExecutionException( "Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle );
+				}
+			}
+
+			if ( null != proxy ){
+				java.net.Proxy javaProxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, new InetSocketAddress( proxy.getHost(), proxy.getPort()));
+				if (isDebug())
+					debug(MessageFormat.format("Found Proxy {0}:{1}",
+							proxy.getHost(), proxy.getPort()));
+
+				if ( client instanceof GitHubClientEgit )
+				{
+					GitHubClientEgit clientEgit = (GitHubClientEgit)client;
+					if (isDebug())
+						debug(MessageFormat.format("Use Proxy for Egit {0}",
+								javaProxy));
+					clientEgit.setProxy( javaProxy );
+				}
+			}
+		}
+		
 		if (configureUsernamePassword(client, userName, password)
 				|| configureOAuth2Token(client, oauth2Token)
 				|| configureServerCredentials(client, serverId, settings,
@@ -177,10 +214,10 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 	protected GitHubClient createClient(String hostname)
 			throws MojoExecutionException {
 		if (!hostname.contains("://"))
-			return new GitHubClient(hostname);
+			return new GitHubClientEgit(hostname);
 		try {
 			URL hostUrl = new URL(hostname);
-			return new GitHubClient(hostUrl.getHost(), hostUrl.getPort(),
+			return new GitHubClientEgit(hostUrl.getHost(), hostUrl.getPort(),
 					hostUrl.getProtocol());
 		} catch (MalformedURLException e) {
 			throw new MojoExecutionException("Could not parse host URL "
@@ -196,7 +233,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 	 * @return non-null client
 	 */
 	protected GitHubClient createClient() {
-		return new GitHubClient();
+		return new GitHubClientEgit();
 	}
 
 	/**
@@ -367,6 +404,46 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 		return null;
 	}
 
+	/**
+	 * Get proxy from settings
+	 *
+	 * @param settings
+	 * @param serverId
+	 *            must be non-null and non-empty
+	 * @return proxy or null if none matching
+	 */
+	protected Proxy getProxy(final Settings settings, final String serverId) {
+		if (settings == null)
+			return null;
+		List<Proxy> proxies = settings.getProxies();
+		if (proxies == null || proxies.isEmpty())
+			return null;
+
+		// search id match first
+		if ( serverId != null && serverId.isEmpty() ) {
+			for (Proxy proxy : proxies) {
+				if ( proxy.isActive() ) {
+					final String proxyId = proxy.getId();
+					if ( proxyId != null && !proxyId.isEmpty() ) {
+						if ( proxyId.equalsIgnoreCase(serverId) ) {
+							if ( ( "http".equalsIgnoreCase( proxy.getProtocol() ) || "https".equalsIgnoreCase( proxy.getProtocol() ) ) ) {
+								return proxy;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// search active proxy
+		for (Proxy proxy : proxies)
+			if ( proxy.isActive() &&
+					( "http".equalsIgnoreCase( proxy.getProtocol() ) || "https".equalsIgnoreCase( proxy.getProtocol() ) )
+					)
+				return proxy;
+		return null;
+	}
+	
 	@Requirement
     private PlexusContainer container;
 	
