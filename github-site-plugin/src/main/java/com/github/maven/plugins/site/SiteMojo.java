@@ -39,6 +39,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.maven.execution.MavenSession;
@@ -47,13 +48,16 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.Blob;
 import org.eclipse.egit.github.core.Commit;
+import org.eclipse.egit.github.core.CommitUser;
 import org.eclipse.egit.github.core.Reference;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.Tree;
 import org.eclipse.egit.github.core.TreeEntry;
 import org.eclipse.egit.github.core.TypedResource;
+import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.RequestException;
 import org.eclipse.egit.github.core.service.DataService;
+import org.eclipse.egit.github.core.service.UserService;
 import org.eclipse.egit.github.core.util.EncodingUtils;
 
 /**
@@ -422,6 +426,22 @@ public class SiteMojo extends GitHubProjectMojo {
 		Commit commit = new Commit();
 		commit.setMessage(message);
 		commit.setTree(tree);
+
+        try {
+            UserService userService = new UserService(service.getClient());
+            User user = userService.getUser();
+
+            CommitUser author = new CommitUser();
+            author.setName(user.getName());
+            author.setEmail(user.getEmail());
+            author.setDate(new GregorianCalendar().getTime());
+
+            commit.setAuthor(author);
+            commit.setCommitter(author);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error retrieving user info: "
+                    + getExceptionMessage(e), e);
+        }
 
 		// Set parent commit SHA-1 if reference exists
 		if (ref != null)
