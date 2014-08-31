@@ -21,37 +21,38 @@
  */
 package com.github.maven.plugins.site;
 
-import static java.lang.Integer.MAX_VALUE;
-import static org.eclipse.egit.github.core.Blob.ENCODING_BASE64;
-import static org.eclipse.egit.github.core.TreeEntry.MODE_BLOB;
-import static org.eclipse.egit.github.core.TreeEntry.TYPE_BLOB;
-import static org.eclipse.egit.github.core.TypedResource.TYPE_COMMIT;
-
 import com.github.maven.plugins.core.GitHubProjectMojo;
 import com.github.maven.plugins.core.PathUtils;
 import com.github.maven.plugins.core.StringUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import static java.lang.Integer.MAX_VALUE;
+import java.text.Format;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.eclipse.egit.github.core.Blob;
+import static org.eclipse.egit.github.core.Blob.ENCODING_BASE64;
 import org.eclipse.egit.github.core.Commit;
+import org.eclipse.egit.github.core.CommitUser;
 import org.eclipse.egit.github.core.Reference;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.Tree;
 import org.eclipse.egit.github.core.TreeEntry;
+import static org.eclipse.egit.github.core.TreeEntry.MODE_BLOB;
+import static org.eclipse.egit.github.core.TreeEntry.TYPE_BLOB;
 import org.eclipse.egit.github.core.TypedResource;
+import static org.eclipse.egit.github.core.TypedResource.TYPE_COMMIT;
 import org.eclipse.egit.github.core.client.RequestException;
 import org.eclipse.egit.github.core.service.DataService;
 import org.eclipse.egit.github.core.util.EncodingUtils;
@@ -418,10 +419,13 @@ public class SiteMojo extends GitHubProjectMojo {
 					+ getExceptionMessage(e), e);
 		}
 
-		// Build commit
-		Commit commit = new Commit();
-		commit.setMessage(message);
-		commit.setTree(tree);
+        // Build commit
+        Commit commit = new Commit();
+        commit.setMessage(message);
+        commit.setTree(tree);
+        CommitUser user = this.createCommitUser();
+        commit.setAuthor(user);
+        commit.setCommitter(user);
 
 		// Set parent commit SHA-1 if reference exists
 		if (ref != null)
@@ -471,4 +475,13 @@ public class SiteMojo extends GitHubProjectMojo {
 			}
 		}
 	}
+    private CommitUser createCommitUser() {
+        CommitUser user = new CommitUser();
+        user.setName("site-maven-plugin");
+        user.setEmail("support@github.com");
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        Calendar now = Calendar.getInstance();
+        user.setDate(now.getTime());
+        return user;
+    }
 }
