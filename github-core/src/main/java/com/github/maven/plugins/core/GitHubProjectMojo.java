@@ -49,6 +49,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
+import org.eclipse.egit.github.core.client.IGitHubConstants;
 
 /**
  * Base GitHub Mojo class to be extended.
@@ -159,7 +160,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 			client = createClient();
 
 		{
-			Proxy proxy = getProxy( settings, serverId );
+			Proxy proxy = getProxy( settings, serverId, host );
 			if ( null != proxy )
 			{
 				try
@@ -405,14 +406,76 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 	}
 
 	/**
+	 * Check hostname that matched nonProxy setting
+	 * 
+	 * @param proxy Maven Proxy. Must not null
+	 * @param hostname
+	 * @return matching result. true: match nonProxy
+	 */
+	protected boolean matchNonProxy( final Proxy proxy, final String hostname )
+	{
+		String host = hostname;
+
+		if ( null == hostname )
+			host = IGitHubConstants.HOST_DEFAULT; // IGitHubConstants.HOST_API;
+
+		// code from org.apache.maven.plugins.site.AbstractDeployMojo#getProxyInfo
+		final String nonProxyHosts = proxy.getNonProxyHosts();
+		if ( null != nonProxyHosts )
+		{
+			final String[] nonProxies = nonProxyHosts.split( "(,)|(;)|(\\|)" );
+			if ( null != nonProxies )
+			{
+				for ( final String nonProxyHost : nonProxies )
+				{
+					//if ( StringUtils.contains( nonProxyHost, "*" ) )
+					if ( null != nonProxyHost && nonProxyHost.contains( "*" ) )
+					{
+						// Handle wildcard at the end, beginning or middle of the nonProxyHost
+						final int pos = nonProxyHost.indexOf( '*' );
+						String nonProxyHostPrefix = nonProxyHost.substring( 0, pos );
+						String nonProxyHostSuffix = nonProxyHost.substring( pos + 1 );
+						// prefix*
+						if ( !StringUtils.isEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
+							&& StringUtils.isEmpty( nonProxyHostSuffix ) )
+						{
+							return true;
+						}
+						// *suffix
+						if ( StringUtils.isEmpty( nonProxyHostPrefix ) && !StringUtils.isEmpty( nonProxyHostSuffix )
+							&& host.endsWith( nonProxyHostSuffix ) )
+						{
+							return true;
+						}
+						// prefix*suffix
+						if ( !StringUtils.isEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
+							&& !StringUtils.isEmpty( nonProxyHostSuffix ) && host.endsWith( nonProxyHostSuffix ) )
+						{
+							return true;
+						}
+					}
+					else if ( host.equals( nonProxyHost ) )
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get proxy from settings
 	 *
 	 * @param settings
 	 * @param serverId
 	 *            must be non-null and non-empty
+	 * @param host
+	 *            hostname
 	 * @return proxy or null if none matching
 	 */
-	protected Proxy getProxy(final Settings settings, final String serverId) {
+	protected Proxy getProxy(final Settings settings, final String serverId, final String host) {
 		if (settings == null)
 			return null;
 		List<Proxy> proxies = settings.getProxies();
@@ -420,14 +483,17 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 			return null;
 
 		// search id match first
-		if ( serverId != null && serverId.isEmpty() ) {
+		if ( serverId != null && !serverId.isEmpty() ) {
 			for (Proxy proxy : proxies) {
 				if ( proxy.isActive() ) {
 					final String proxyId = proxy.getId();
 					if ( proxyId != null && !proxyId.isEmpty() ) {
 						if ( proxyId.equalsIgnoreCase(serverId) ) {
 							if ( ( "http".equalsIgnoreCase( proxy.getProtocol() ) || "https".equalsIgnoreCase( proxy.getProtocol() ) ) ) {
-								return proxy;
+								if ( matchNonProxy( proxy, host ) )
+									return null;
+								else
+									return proxy;
 							}
 						}
 					}
@@ -440,7 +506,13 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 			if ( proxy.isActive() &&
 					( "http".equalsIgnoreCase( proxy.getProtocol() ) || "https".equalsIgnoreCase( proxy.getProtocol() ) )
 					)
-				return proxy;
+			{
+				if ( matchNonProxy( proxy, host ) )
+					return null;
+				else
+					return proxy;
+			}
+
 		return null;
 	}
 	
