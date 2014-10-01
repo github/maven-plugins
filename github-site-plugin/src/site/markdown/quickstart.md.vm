@@ -25,7 +25,7 @@ In your project's `pom` file, add ${project.artifact} in the plugin list.
                 <!-- select the Maven phase in which the plugin will be executed -->
                 <phase>site-deploy</phase>
                 <configuration>
-                    <!-- Plugin configuration ges here -->
+                    <!-- Plugin configuration goes here -->
 
                     <server>github</server>
 
