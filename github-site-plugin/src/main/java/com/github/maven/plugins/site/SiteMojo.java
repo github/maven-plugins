@@ -318,7 +318,6 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(excludePaths)));
 		String[] paths = PathUtils.getMatchingPaths(includePaths, excludePaths,
 				baseDir);
-
 		if (paths.length != 1)
 			info(MessageFormat.format("Creating {0} blobs", paths.length));
 		else
@@ -432,7 +431,11 @@ public class SiteMojo extends GitHubProjectMojo {
             User user = userService.getUser();
 
             CommitUser author = new CommitUser();
-            author.setName(user.getName());
+            //Register a GitHub user profile name does not exist in the login name you commit
+            if( user.getName() == null || user.getName().length() == 0){
+            	author.setName(user.getLogin());
+            }
+
             author.setEmail(userService.getEmails().get(0));
             author.setDate(new GregorianCalendar().getTime());
 
