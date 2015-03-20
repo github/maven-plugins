@@ -432,6 +432,7 @@ public class SiteMojo extends GitHubProjectMojo {
 
             CommitUser author = new CommitUser();
             //Register a GitHub user profile name does not exist in the login name you commit
+	        author.setName(user.getName());
             if( user.getName() == null || user.getName().length() == 0){
             	author.setName(user.getLogin());
             }
