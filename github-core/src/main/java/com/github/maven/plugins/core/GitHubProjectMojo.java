@@ -192,7 +192,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 				}
 			}
 		}
-		
+
 		if (configureUsernamePassword(client, userName, password)
 				|| configureOAuth2Token(client, oauth2Token)
 				|| configureServerCredentials(client, serverId, settings,
@@ -215,10 +215,10 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 	protected GitHubClient createClient(String hostname)
 			throws MojoExecutionException {
 		if (!hostname.contains("://"))
-			return new GitHubClientEgit(hostname);
+			return new RateLimitedGitHubClient(hostname);
 		try {
 			URL hostUrl = new URL(hostname);
-			return new GitHubClientEgit(hostUrl.getHost(), hostUrl.getPort(),
+			return new RateLimitedGitHubClient(hostUrl.getHost(), hostUrl.getPort(),
 					hostUrl.getProtocol());
 		} catch (MalformedURLException e) {
 			throw new MojoExecutionException("Could not parse host URL "
@@ -234,7 +234,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 	 * @return non-null client
 	 */
 	protected GitHubClient createClient() {
-		return new GitHubClientEgit();
+		return new RateLimitedGitHubClient();
 	}
 
 	/**
@@ -333,7 +333,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 					throw new MojoExecutionException( "Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle );
 				}
 			}
-				
+
 			serverUsername = server.getUsername();
 			serverPassword = server.getPassword();
 //		}
@@ -407,7 +407,7 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 
 	/**
 	 * Check hostname that matched nonProxy setting
-	 * 
+	 *
 	 * @param proxy Maven Proxy. Must not null
 	 * @param hostname
 	 * @return matching result. true: match nonProxy
@@ -515,10 +515,10 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 
 		return null;
 	}
-	
+
 	@Requirement
     private PlexusContainer container;
-	
+
     /**
      * {@inheritDoc}
      */
@@ -527,5 +527,5 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
     {
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
-	
+
 }
