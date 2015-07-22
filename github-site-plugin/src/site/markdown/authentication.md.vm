@@ -23,8 +23,7 @@ In your `~/.m2/settings.xml` file, add a `server` entry as follows:
     	<password>YOUR_PASSWORD</password>
   	</server>
 
-Using oauth is quite similar. Once you have done all the preliminaries (see [GitHub OAuth support](http://developer
-.github.com/v3/oauth/)), add a `server` entry as follows:
+Using oauth is quite similar. Once you have done all the preliminaries (see [GitHub OAuth support](http://developer.github.com/v3/oauth/)), add a `server` entry as follows:
 
     <server>
         <id>github</id>

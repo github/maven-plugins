@@ -24,20 +24,20 @@ In your project's `pom` file, add ${project.artifact} in the plugin list.
                 </goals>
                 <!-- select the Maven phase in which the plugin will be executed -->
                 <phase>site-deploy</phase>
-                <configuration>
-                    <!-- Plugin configuration ges here -->
-
-                    <server>github</server>
-
-                    <!-- The commit message -->
-                    <message>Building site for my project</message>
-                    <!-- The location where the site is uploaded -->
-                    <path>${site.path}</path>
-                    <!-- Use merge or override the content -->
-                    <merge>true</merge>
-                </configuration>
             </execution>
         </executions>
+        <configuration>
+            <!-- Plugin configuration goes here -->
+
+            <server>github</server>
+
+            <!-- The commit message -->
+            <message>Building site for my project</message>
+            <!-- The location where the site is uploaded -->
+            <path>${site.path}</path>
+            <!-- Use merge or override the content -->
+            <merge>true</merge>
+        </configuration>
     </plugin>
 
 

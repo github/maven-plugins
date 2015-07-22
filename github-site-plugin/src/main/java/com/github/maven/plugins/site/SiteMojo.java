@@ -218,7 +218,7 @@ public class SiteMojo extends GitHubProjectMojo {
 	private boolean noJekyll;
 
 	/**
-	 * Set it to {@code true} to merge with existing the existing tree that is referenced by the commit
+	 * Set it to {@code true} to merge with the existing tree that is referenced by the commit
 	 * that the ref currently points to
 	 *
 	 * @parameter expression="${github.site.merge}"
