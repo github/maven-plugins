@@ -51,7 +51,7 @@ the plugin configuration:
                 <phase>site-deploy</phase>
                 <configuration>
                     <!-- repository identification -->
-                    <repositoryName>coffee-mill-maven-plugin<repositoryName>
+                    <repositoryName>coffee-mill-maven-plugin</repositoryName>
                     <repositoryOwner>nanoko-project</repositoryOwner>
 
                     <server>github</server>
