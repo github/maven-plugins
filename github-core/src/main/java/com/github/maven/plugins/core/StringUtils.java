@@ -55,7 +55,7 @@ public class StringUtils {
 	public static String[] removeEmpties(final String... values) {
 		if (values == null || values.length == 0)
 			return new String[0];
-		List<String> validValues = new ArrayList<String>();
+		List<String> validValues = new LinkedList<String>();
 		for (String value : values)
 			if (value != null && value.length() > 0)
 				validValues.add(value);
