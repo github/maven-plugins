@@ -22,7 +22,6 @@
 package com.github.maven.plugins.site;
 
 import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.min;
 import static org.eclipse.egit.github.core.Blob.ENCODING_BASE64;
 import static org.eclipse.egit.github.core.TreeEntry.MODE_BLOB;
 import static org.eclipse.egit.github.core.TreeEntry.TYPE_BLOB;
@@ -331,14 +330,25 @@ public class SiteMojo extends GitHubProjectMojo {
 		// Push updates in multiple passes
 		final int CAPACITY = 500;
 		int start = 0;
-		int end = min(CAPACITY, paths.length);
+		int end = Math.min(CAPACITY, paths.length);
 		while (start < paths.length) {
 			info("Sending batch: [" + start + " - " + end + ")");
-			String[] subpaths = Arrays.copyOfRange(paths, start, end);
+			String[] subpaths = copyOfRange(paths, start, end);
 			doExecute(repository, subpaths);
 			start = end;
 			end = (end + CAPACITY < paths.length ? end + CAPACITY : paths.length );
 		}
+	}
+
+	private String[] copyOfRange(String[] original, int from, int to) {
+		int newLength = to - from;
+		if (newLength < 0) {
+			throw new IllegalArgumentException(from + " > " + to);
+		}
+
+		String[] copy = new String[newLength];
+		System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
+		return copy;
 	}
 
 	private void doExecute(RepositoryId repository, String[] paths) throws MojoExecutionException {
