@@ -327,6 +327,31 @@ public class SiteMojo extends GitHubProjectMojo {
 			debug(MessageFormat.format("Scanned files to include: {0}",
 					Arrays.toString(paths)));
 
+		// Push updates in multiple passes
+		final int CAPACITY = 500;
+		int start = 0;
+		int end = Math.min(CAPACITY, paths.length);
+		while (start < paths.length) {
+			info("Sending batch: [" + start + " - " + end + ")");
+			String[] subpaths = copyOfRange(paths, start, end);
+			doExecute(repository, subpaths);
+			start = end;
+			end = (end + CAPACITY < paths.length ? end + CAPACITY : paths.length );
+		}
+	}
+
+	private String[] copyOfRange(String[] original, int from, int to) {
+		int newLength = to - from;
+		if (newLength < 0) {
+			throw new IllegalArgumentException(from + " > " + to);
+		}
+
+		String[] copy = new String[newLength];
+		System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
+		return copy;
+	}
+
+	private void doExecute(RepositoryId repository, String[] paths) throws MojoExecutionException {
 		DataService service = new DataService(createClient(host, userName,
 				password, oauth2Token, server, settings, session));
 
