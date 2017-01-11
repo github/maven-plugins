@@ -1,3 +1,7 @@
+
+This fork of includes code that makes uploads go faster. To use it, clone this repo, run `mvn clean install` and use version 0.13-M1 instead of version 0.12 of `site-maven-plugin`.
+
+
 # GitHub Maven Plugins [![Build Status](https://travis-ci.org/github/maven-plugins.svg)](https://travis-ci.org/github/maven-plugins)
 
 Collection of [Maven](http://maven.apache.org/) plugins that integrate with GitHub.
