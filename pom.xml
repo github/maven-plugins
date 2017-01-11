@@ -4,7 +4,7 @@
 
     <groupId>com.github.github</groupId>
     <artifactId>github-maven-plugins-parent</artifactId>
-    <version>0.13-SNAPSHOT</version>
+    <version>0.13-M1</version>
     <packaging>pom</packaging>
 
     <parent>
