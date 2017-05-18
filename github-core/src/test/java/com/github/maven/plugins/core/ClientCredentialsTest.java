@@ -56,22 +56,17 @@ public class ClientCredentialsTest {
 
 		private final AtomicReference<String> token = new AtomicReference<String>();
 
-		protected GitHubClient createClient() {
-			try
-			{
-				DefaultPlexusContainer container = new DefaultPlexusContainer();
-				Context context = container.getContext();
-				context.put( PlexusConstants.PLEXUS_KEY, container );
-				super.contextualize(context );
-			}
-			catch ( PlexusContainerException pce )
-			{
-				pce.printStackTrace( System.err );
-			}
-			catch ( ContextException ce )
-			{
-				ce.printStackTrace( System.err );
-			}
+        protected GitHubClient createClient(double callsPerMinute) {
+            try {
+                DefaultPlexusContainer container = new DefaultPlexusContainer();
+                Context context = container.getContext();
+                context.put(PlexusConstants.PLEXUS_KEY, container);
+                super.contextualize(context);
+            } catch (PlexusContainerException pce) {
+                pce.printStackTrace(System.err);
+            } catch (ContextException ce) {
+                ce.printStackTrace(System.err);
+            }
 
 			return new GitHubClient() {
 				public GitHubClient setCredentials(String user, String password) {
@@ -85,17 +80,29 @@ public class ClientCredentialsTest {
 					return super.setOAuth2Token(token);
 				}
 
-			};
-		}
+            };
+        }
 
-		@Override
-		public GitHubClient createClient(String host, String userName,
-				String password, String oauth2Token, String serverId,
-				Settings settings, MavenSession session)
-				throws MojoExecutionException {
-			return super.createClient(host, userName, password, oauth2Token,
-					serverId, settings, session);
-		}
+        protected GitHubClient createClient() {
+            return createClient(20.0);
+        }
+
+        public GitHubClient createClient(String host, String userName,
+                                         String password, String oauth2Token, String serverId,
+                                         Settings settings, MavenSession session, double callsPerMinute)
+                throws MojoExecutionException {
+            return super.createClient(host, userName, password, oauth2Token,
+                    serverId, settings, session, callsPerMinute);
+        }
+
+        @Override
+        public GitHubClient createClient(String host, String userName,
+                                         String password, String oauth2Token, String serverId,
+                                         Settings settings, MavenSession session)
+                throws MojoExecutionException {
+            return this.createClient(host, userName, password, oauth2Token,
+                    serverId, settings, session, 20.0);
+        }
 
 		public void execute() throws MojoExecutionException,
 				MojoFailureException {

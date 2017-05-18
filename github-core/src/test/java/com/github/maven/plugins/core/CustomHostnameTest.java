@@ -45,23 +45,22 @@ public class CustomHostnameTest {
 
 		private final AtomicReference<String> host = new AtomicReference<String>();
 
-		protected GitHubClient createClient() {
+		protected GitHubClient createClient(double callsPerMinute) {
 			host.set(null);
-			return super.createClient();
+			return super.createClient(20.0);
 		}
 
-		protected GitHubClient createClient(String hostname)
-				throws MojoExecutionException {
+		protected GitHubClient createClient(String hostname, double callsPerMinute) throws MojoExecutionException {
 			host.set(hostname);
-			return super.createClient(hostname);
+			return super.createClient(hostname, callsPerMinute);
 		}
 
 		public GitHubClient createClient(String host, String userName,
 				String password, String oauth2Token, String serverId,
-				Settings settings, MavenSession session)
+				Settings settings, MavenSession session, double callsPerMinute)
 				throws MojoExecutionException {
 			return super.createClient(host, userName, password, oauth2Token,
-					serverId, settings, session);
+					serverId, settings, session, callsPerMinute);
 		}
 
 		public void execute() throws MojoExecutionException,

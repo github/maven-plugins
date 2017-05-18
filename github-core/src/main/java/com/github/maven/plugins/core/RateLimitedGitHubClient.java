@@ -12,18 +12,21 @@ public class RateLimitedGitHubClient extends GitHubClientEgit {
      * AS per https://github.com/octokit/octokit.net/issues/638#issuecomment-67795998,
      * it seems that GitHub only allow 20 API calls per 1-minute period
      */
-    private RateLimiter rateLimiter = RateLimiter.create(20.0/60.0);
+    private RateLimiter rateLimiter;
 
-    public RateLimitedGitHubClient() {
+    public RateLimitedGitHubClient(double callsPerMinute) {
         super();
+        rateLimiter = RateLimiter.create(callsPerMinute/60.0);
     }
 
-    public RateLimitedGitHubClient(String hostname) {
+    public RateLimitedGitHubClient(String hostname, double callsPerMinute) {
         super(hostname);
+        rateLimiter = RateLimiter.create(callsPerMinute/60.0);
     }
 
-    public RateLimitedGitHubClient(String hostname, int port, String scheme) {
+    public RateLimitedGitHubClient(String hostname, int port, String scheme, double callsPerMinute) {
         super(hostname, port, scheme);
+        rateLimiter = RateLimiter.create(callsPerMinute/60.0);
     }
 
     @Override

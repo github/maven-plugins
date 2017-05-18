@@ -30,8 +30,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
-import org.eclipse.egit.github.core.RepositoryId;
-import org.eclipse.egit.github.core.client.GitHubClient;
 import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
@@ -42,6 +40,9 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.eclipse.egit.github.core.RepositoryId;
+import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.client.IGitHubConstants;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -49,7 +50,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
-import org.eclipse.egit.github.core.client.IGitHubConstants;
 
 /**
  * Base GitHub Mojo class to be extended.
@@ -134,30 +134,36 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 			log.info(message, throwable);
 	}
 
-	/**
-	 * Create client
-	 *
-	 * @param host
-	 * @param userName
-	 * @param password
-	 * @param oauth2Token
-	 * @param serverId
-	 * @param settings
-	 * @param session
-	 * @return client
-	 * @throws MojoExecutionException
-	 */
-	protected GitHubClient createClient(String host, String userName,
-			String password, String oauth2Token, String serverId,
-			Settings settings, MavenSession session)
-			throws MojoExecutionException {
-		GitHubClient client;
-		if (!StringUtils.isEmpty(host)) {
-			if (isDebug())
-				debug("Using custom host: " + host);
-			client = createClient(host);
-		} else
-			client = createClient();
+    /**
+     * Create client
+     *
+     * @param host
+     * @param userName
+     * @param password
+     * @param oauth2Token
+     * @param serverId
+     * @param settings
+     * @param session
+     * @return client
+     * @throws MojoExecutionException
+     */
+    protected GitHubClient createClient(String host, String userName,
+                                        String password, String oauth2Token, String serverId,
+                                        Settings settings, MavenSession session) throws MojoExecutionException {
+        return createClient(host, userName, password, oauth2Token, serverId, settings, session, 20.0);
+    }
+
+    protected GitHubClient createClient(String host, String userName,
+                                        String password, String oauth2Token, String serverId,
+                                        Settings settings, MavenSession session, double callsPerMinute)
+            throws MojoExecutionException {
+        GitHubClient client;
+        if (!StringUtils.isEmpty(host)) {
+            if (isDebug())
+                debug("Using custom host: " + host);
+            client = createClient(host, callsPerMinute);
+        } else
+            client = createClient(callsPerMinute);
 
 		{
 			Proxy proxy = getProxy( settings, serverId, host );
@@ -203,39 +209,48 @@ public abstract class GitHubProjectMojo extends AbstractMojo implements Contextu
 					"No authentication credentials configured");
 	}
 
-	/**
-	 * Create client
-	 * <p>
-	 * Subclasses can override to do any custom client configuration
-	 *
-	 * @param hostname
-	 * @return non-null client
-	 * @throws MojoExecutionException
-	 */
-	protected GitHubClient createClient(String hostname)
-			throws MojoExecutionException {
-		if (!hostname.contains("://"))
-			return new RateLimitedGitHubClient(hostname);
-		try {
-			URL hostUrl = new URL(hostname);
-			return new RateLimitedGitHubClient(hostUrl.getHost(), hostUrl.getPort(),
-					hostUrl.getProtocol());
-		} catch (MalformedURLException e) {
-			throw new MojoExecutionException("Could not parse host URL "
-					+ hostname, e);
-		}
-	}
+    /**
+     * Create client
+     * <p>
+     * Subclasses can override to do any custom client configuration
+     *
+     * @param hostname
+     * @return non-null client
+     * @throws MojoExecutionException
+     */
+    protected GitHubClient createClient(String hostname)
+            throws MojoExecutionException {
+        return createClient(hostname, 20.0);
+    }
 
-	/**
-	 * Create client
-	 * <p>
-	 * Subclasses can override to do any custom client configuration
-	 *
-	 * @return non-null client
-	 */
-	protected GitHubClient createClient() {
-		return new RateLimitedGitHubClient();
-	}
+    protected GitHubClient createClient(String hostname, double callsPerMinute)
+            throws MojoExecutionException {
+        if (!hostname.contains("://"))
+            return new RateLimitedGitHubClient(hostname, callsPerMinute);
+        try {
+            URL hostUrl = new URL(hostname);
+            return new RateLimitedGitHubClient(hostUrl.getHost(), hostUrl.getPort(),
+                    hostUrl.getProtocol(), callsPerMinute);
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Could not parse host URL "
+                    + hostname, e);
+        }
+    }
+
+    /**
+     * Create client
+     * <p>
+     * Subclasses can override to do any custom client configuration
+     *
+     * @return non-null client
+     */
+    protected GitHubClient createClient() {
+        return createClient(20.0);
+    }
+
+    protected GitHubClient createClient(double callsPerMinute) {
+        return new RateLimitedGitHubClient(callsPerMinute);
+    }
 
 	/**
 	 * Configure credentials from configured username/password combination
