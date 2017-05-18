@@ -38,6 +38,8 @@ by the settings configuration property in parentheses.
   * Name of repository
 * `repositoryOwner`
   * Owner of repository
+* `callsPerMinute` (`github.global.callsPerMinute`)
+  * Number of calls per minute to allow in the rate limiter. Default is 20, which allows 20 calls/min. Setting this to a value like 1000 will allow 1000 calls/minute to github. Useful if you are using GitHub Enterprise or other self hosted solution where the limit isn't capped at a fixed rate like the public GitHub.
 
 *Note:* `repositoryOwner` property and `repositoryName` are optional and will be
 inferred from the following properties if not specified

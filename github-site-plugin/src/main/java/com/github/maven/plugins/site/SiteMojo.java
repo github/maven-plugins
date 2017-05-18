@@ -243,6 +243,14 @@ public class SiteMojo extends GitHubProjectMojo {
      */
     private boolean skip;
 
+    /**
+     * The number of calls per minute to allow to github. Default to 20.
+     *
+     * @parameter expression="${github.site.callsPerMinute}"
+	 *            default-value="20.0"
+     */
+    private double callsPerMinute;
+
 	/**
 	 * Create blob
 	 *
@@ -328,7 +336,7 @@ public class SiteMojo extends GitHubProjectMojo {
 					Arrays.toString(paths)));
 
 		DataService service = new DataService(createClient(host, userName,
-				password, oauth2Token, server, settings, session));
+				password, oauth2Token, server, settings, session, callsPerMinute));
 
 		// Write blobs and build tree entries
 		List<TreeEntry> entries = new ArrayList<TreeEntry>(paths.length);
