@@ -244,9 +244,10 @@ public class SiteMojo extends GitHubProjectMojo {
     private boolean skip;
 
     /**
-     * The number of calls per minute to allow to github. Default to 20/min
+     * The number of calls per minute to allow to github. Default to 20.
      *
      * @parameter expression="${github.site.callsPerMinute}"
+	 *            default-value="20.0"
      */
     private double callsPerMinute;
 
